@@ -25,6 +25,7 @@ policy-quote/
     backend/              # Policy quote API and backend runtime adapters
     frontend/             # Angular policy quote user interface
   packages/
+    infra/                # CDK infrastructure for API Gateway, Lambda, and optional Fargate
     api-contract/         # Shared Zod schemas and TypeScript API types
   kb/
     risk-kb.json          # Versioned policy quote knowledge base
@@ -32,6 +33,7 @@ policy-quote/
     architecture.md       # System-level architecture
     backend.md            # Backend organization and responsibilities
     frontend.md           # Frontend organization and responsibilities
+    infra.md              # CDK, SAM local, and Fargate deployment design
     kb.md                 # Knowledge base schema and rule examples
 ```
 
@@ -40,6 +42,7 @@ The workspace packages have distinct responsibilities:
 - `@policy-quote/backend` owns quote processing, risk evaluation, premium calculation, and API responses.
 - `@policy-quote/frontend` owns the browser experience for entering quote details and reading results.
 - `@policy-quote/api-contract` owns shared request and response schemas.
+- `@policy-quote/infra` owns CDK infrastructure wiring for API Gateway, Lambda, and optional Fargate resources.
 - `kb/risk-kb.json` owns UI input definitions, rating data, risk bands, and risk factors.
 
 ## High-Level Request Flow
@@ -79,7 +82,7 @@ Request flow responsibilities:
 
 The backend uses one business core with two runtime adapters:
 
-- Lambda adapter: API Gateway event, Middy middleware, route table, shared services.
+- Lambda adapter: three API Gateway Lambda handlers, one each for health, UI metadata, and quote creation.
 - HTTP adapter: Fastify server for local container or Fargate-style deployment, shared services.
 
 Both adapters call the same quote service, health service, KB runtime, and risk engine. Runtime-specific code handles transport details only; it does not own scoring rules or premium behavior.
@@ -177,13 +180,16 @@ The backend uses these contracts for validation and response shaping. The fronte
 
 The backend supports two deployment styles through shared services:
 
-- Lambda: `handler.ts` wrapped by Middy for API Gateway.
-- Container: `server.ts` running Fastify for local HTTP or Fargate-style runtime.
+- Lambda: three handler entrypoints wired to API Gateway routes by CDK.
+- Container: Fastify server running as a local Docker or Fargate-style runtime.
 
 The container path should run the compiled Fastify server. It should not invoke the Lambda handler internally.
+
+CDK is the source of truth for deployable AWS infrastructure. SAM CLI can be used for local Lambda/API Gateway testing by running against the CloudFormation template produced by `cdk synth`. See `docs/infra.md` for the infrastructure and local-runtime workflow.
 
 ## Documentation Map
 
 - `docs/backend.md`: backend package organization, components, and single-responsibility boundaries.
 - `docs/frontend.md`: frontend package organization, components, state, and UI boundaries.
+- `docs/infra.md`: CDK infrastructure ownership, SAM local workflow, and Fargate container path.
 - `docs/kb.md`: KB structure, operators, factor examples, and rule-change guidance.

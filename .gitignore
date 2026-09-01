@@ -3,6 +3,7 @@ node_modules/
 
 # Build outputs / caches
 dist/
+cdk.out/
 .angular/
 .turbo/
 .cache/
@@ -14,7 +15,6 @@ coverage/
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
-.agent-log/
 
 # Environment / local secrets
 .env

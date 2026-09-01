@@ -4,27 +4,70 @@
 
 The backend is the authoritative policy quote service. It validates requests, exposes KB-backed UI metadata, evaluates risk rules, calculates premiums, and returns explainable quote responses.
 
-The backend package is `@policy-quote/backend` under `apps/backend`. This document intentionally stays at module and service level so the implementation can evolve without requiring the docs to list every source file.
+The backend package is `@policy-quote/backend` under `apps/backend`. It exposes three Lambda handlers for the API Gateway path and one Fastify server for the Docker/Fargate path. Both adapters delegate to shared endpoint functions and services.
 
 ## Package Organization
 
 ```text
 apps/backend/
-  package and runtime config
-  deployment config
-  source code
-    runtime adapters
-    API helpers
-    health module
-    policy quote module
-    knowledge base module
-    risk engine module
-    tests
+  package.json
+  tsconfig.json
+  tsconfig.spec.json
+  Dockerfile                         # Fastify container build for Docker/Fargate
+
+  src/
+    lambda/
+      health.ts                      # exports handler for GET /health
+      quote-ui-inputs.ts             # exports handler for GET /policy/quote/ui-inputs
+      create-quote.ts                # exports handler for POST /policy/quote
+
+    server/
+      server.ts                      # Fastify process for local Docker/Fargate
+      routes.ts                      # Fastify route registration
+
+    endpoints/
+      health.endpoint.ts             # shared endpoint for service health
+      quote-ui-inputs.endpoint.ts    # shared endpoint for KB-backed form metadata
+      create-quote.endpoint.ts       # shared endpoint for quote creation
+
+    api/
+      http-response.ts               # Lambda JSON response helpers
+      http-error.ts                  # API error helpers/types
+
+    health/
+      health.service.ts              # service status and active KB version
+
+    policy-quote/
+      quote.service.ts               # quote orchestration use case
+      quote.mapper.ts                # maps internal quote result to API response
+
+    knowledge-base/
+      load-kb.ts                     # loads kb/risk-kb.json
+      kb.schema.ts                   # Zod schema for validating KB
+      kb-runtime.ts                  # validates and compiles the active KB once
+      kb.types.ts                    # KB-specific types
+
+    risk-engine/
+      compile-kb-factors.ts          # compiles KB condition rows into predicates
+      condition-operators.ts         # generic condition operators
+      evaluate-risk.ts               # calculates riskScore and appliedFactors
+      premium.ts                     # calculates annual/monthly premium
+      risk-band.ts                   # resolves risk band from KB thresholds
+      risk-summary.ts                # builds plain-English risk summary
+      risk-engine.types.ts           # risk engine internal types
+
+    test/
+      lambda-handlers.spec.ts
+      fastify-routes.spec.ts
+      quote.service.spec.ts
+      risk-engine.spec.ts
+      kb-validation.spec.ts
 ```
 
 The backend is organized by responsibility:
 
 - Runtime adapters handle transport concerns for Lambda and HTTP server execution.
+- Shared endpoint functions keep public endpoint behavior reusable across Lambda and Fastify.
 - API helpers keep response and error handling consistent.
 - The health module reports service readiness and active KB version.
 - The policy quote module coordinates quote creation.
@@ -53,12 +96,14 @@ The quote response includes:
 
 ## Runtime Adapters
 
-The backend supports two runtime paths that share the same business services:
+The backend supports two runtime paths that share the same endpoint functions and business services:
 
-- Lambda path: adapts API Gateway events into route execution and uses middleware for Lambda-specific concerns.
-- HTTP server path: runs as a long-lived service for local development or container deployment.
+- Lambda path: three exported handlers adapt API Gateway events for `GET /health`, `GET /policy/quote/ui-inputs`, and `POST /policy/quote`.
+- HTTP server path: one Fastify process runs as a long-lived service for local development, Docker, or Fargate.
 
 Runtime adapters should remain thin. They translate transport-specific request and response details, then delegate to shared services. They should not own quote scoring, premium calculation, or KB business rules.
+
+The Fastify server must not invoke Lambda handlers internally. Lambda and Fastify should call the same lower-level endpoint functions.
 
 ## Service Responsibilities
 
