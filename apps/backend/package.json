@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --max-warnings=0",
-    "test": "node --import tsx --test src/**/*.test.ts",
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --config ../../jest.config.mjs apps/backend/src",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -16,12 +16,14 @@
     "@middy/http-content-encoding": "^7.9.2",
     "@middy/http-content-negotiation": "^7.9.2",
     "@middy/http-error-handler": "^7.9.2",
-    "@policy-quote/api-contract": "workspace:*"
+    "@policy-quote/api-contract": "workspace:*",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.159",
+    "@types/jest": "^30.0.0",
     "@types/node": "^26.4.0",
-    "tsx": "^4.0.0",
+    "ts-jest": "^29.4.12",
     "typescript": "^5.0.0"
   }
 }

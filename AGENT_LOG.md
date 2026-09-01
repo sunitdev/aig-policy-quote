@@ -170,3 +170,73 @@ Verification:
 - Add unit tests for `jsonResponse` and the health Lambda.
 - Move the health contract into `health.contract.ts` and keep `index.ts` as the package export barrel.
 - Use the `agent-log-session` skill to update this session entry manually.
+
+## Session: KnowledgeBase Service
+
+- Started: 2026-09-01 15:47:10 +0100
+- Agent: codex
+- Session ID: `01a05d6b-043e-7232-899e-f9832d9d6b4d`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 15:47:10 +0100
+
+```text
+Implement KnowledgeBase service in `apps/src/backend/services/knowledgeBase/` .&#x20;
+
+
+
+Behaviour:
+
+- The service should have types which match [risk-kb.json](kb/risk-kb.json) . Use Zod for defining the types.
+- The service should have `parseKnowledgeBase(input: string): KnowledgeBase` should parse the input using the zod schema.
+- The service should have a `loadKnowledgeBase(path: string): KnowledgeBase` function which checks if the file exists and it it exists it should call `parseKnowledgeBase` and return a valid  `KnowledgeBase`.
+- The service should have a `getKnowledgeBase(path: string): KnowledgeBase` which should check if we have already a cached knowledge base if yes then return cache or call `loadKnowledgeBase` and update cache and return.&#x20;
+- Add unit test for all the functions.
+
+
+
+Context:
+
+- [kb.md](docs/kb.md)&#x20;
+- [backend.md](docs/backend.md)&#x20;
+
+
+
+Expected behavuour.
+
+- The service should be able to read [risk-kb.json](kb/risk-kb.json) and parse value in unit test
+```
+
+### Summary of change
+
+- Added a Zod-backed KnowledgeBase V1 schema and parse/load/get service functions with per-path caching.
+- Added unit tests covering real KB parsing, invalid input, file loading, missing-file errors, and cache behavior.
+- Split shared KnowledgeBase V1 schemas/types into `types.ts` and renamed the implementation module to `service.ts`.
+- Migrated backend unit tests to Jest and updated the root Jest config for TypeScript tests.
+- Updated project rules to require Jest for project tests.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `.agents/rules/project-rules.md`
+- `apps/backend/package.json`
+- `apps/backend/tsconfig.json`
+- `apps/backend/src/api/http-response.test.ts`
+- `apps/backend/src/lambda/health.test.ts`
+- `apps/backend/src/services/knowledgeBase/index.ts`
+- `apps/backend/src/services/knowledgeBase/service.test.ts`
+- `apps/backend/src/services/knowledgeBase/service.ts`
+- `apps/backend/src/services/knowledgeBase/types.ts`
+- `jest.config.mjs`
+- `package.json`
+- `pnpm-lock.yaml`
+- `tsconfig.base.json`
+
+### What Changes were suggest by the user
+
+- Name the public KB type `KnowledgeBaseV1`.
+- Implement the approved KnowledgeBase service plan.
+- Move KnowledgeBase shared types to `apps/backend/src/services/knowledgeBase/types.ts`.
+- Rename `knowledgeBase.service.ts` to `service.ts`.
+- Use Jest for unit tests and update project rules to require Jest.

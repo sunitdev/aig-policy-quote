@@ -1,12 +1,9 @@
-import assert from "node:assert/strict";
-import { describe, it } from "node:test";
-
 import type { APIGatewayProxyEvent, Context } from "aws-lambda";
 
 import { handler } from "./health";
 
-void describe("health handler", () => {
-  void it("returns the shared health response contract", async () => {
+describe("health handler", () => {
+  it("returns the shared health response contract", async () => {
     const response = await handler(
       {
         headers: {},
@@ -15,10 +12,10 @@ void describe("health handler", () => {
       {} as Context
     );
 
-    assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.headers, {
+    expect(response.statusCode).toBe(200);
+    expect(response.headers).toEqual({
       "content-type": "application/json"
     });
-    assert.equal(response.body, JSON.stringify({ status: "ok" }));
+    expect(response.body).toBe(JSON.stringify({ status: "ok" }));
   });
 });
