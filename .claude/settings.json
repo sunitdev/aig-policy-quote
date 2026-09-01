@@ -1,0 +1,38 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh \"${CLAUDE_PROJECT_DIR}/scripts/run-agent-log-hook.sh\" claude",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh \"${CLAUDE_PROJECT_DIR}/scripts/run-agent-log-hook.sh\" claude",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh \"${CLAUDE_PROJECT_DIR}/scripts/run-agent-log-hook.sh\" claude",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}

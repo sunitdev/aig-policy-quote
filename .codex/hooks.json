@@ -1,0 +1,40 @@
+{
+  "description": "Project-local agent session logging for AGENT_LOG.md.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh \"$(git rev-parse --show-toplevel)/scripts/run-agent-log-hook.sh\" codex",
+            "timeout": 5,
+            "statusMessage": "Preparing agent session log"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh \"$(git rev-parse --show-toplevel)/scripts/run-agent-log-hook.sh\" codex",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh \"$(git rev-parse --show-toplevel)/scripts/run-agent-log-hook.sh\" codex",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

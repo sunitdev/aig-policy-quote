@@ -1,21 +1,64 @@
 {
+  "kbSchemaVersion": "1.0.0",
   "version": "1.0.0",
   "basePremium": 300,
   "coverageLoadFactor": 1.2,
   "riskBands": {
     "STANDARD": {
       "min": 0,
-      "max": 25
+      "max": 25,
+      "riskMultiplier": 1
     },
     "ELEVATED": {
       "min": 26,
-      "max": 60
+      "max": 60,
+      "riskMultiplier": 1.5
     },
     "HIGH_RISK": {
       "min": 61,
-      "max": 999
+      "max": 999,
+      "riskMultiplier": 2.2
     }
   },
+  "uiInputs": [
+    {
+      "id": "customerName",
+      "type": "text",
+      "label": "Full Name",
+      "description": "Full name of the policyholder",
+      "required": true
+    },
+    {
+      "id": "age",
+      "label": "Age",
+      "description": "Age of the policyholder",
+      "required": true,
+      "type": "number",
+      "min": 18,
+      "max": 100
+    },
+    {
+      "id": "previousClaims",
+      "type": "number",
+      "label": "Number of previous claims",
+      "description": "Number of previous insurance claims made by the policyholder",
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "propertyType",
+      "type": "select",
+      "label": "Type of property",
+      "options": ["House", "Flat", "Bungalow"]
+    },
+    {
+      "id": "propertyValue",
+      "type": "number",
+      "label": "Property value (£)",
+      "min": 50000,
+      "max": 2000000
+    }
+  ],
   "factors": [
     {
       "id": "age_young_elderly",
@@ -70,6 +113,25 @@
         "value": 750000
       },
       "points": 25
+    },
+    {
+      "id": "flat_and_property_value_high",
+      "description": "Flat and property value over £500,000",
+      "condition": {
+        "all": [
+          {
+            "field": "propertyType",
+            "operator": "eq",
+            "value": "Flat"
+          },
+          {
+            "field": "propertyValue",
+            "operator": "gt",
+            "value": 500000
+          }
+        ]
+      },
+      "points": 35
     }
   ]
 }
