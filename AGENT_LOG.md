@@ -850,3 +850,62 @@ Dont assume anything ask me question if needed.
 ### What Changes were suggest by the user
 
 - Implement the approved RiskBandBadgeComponent plan.
+
+## Session: Frontend Policy Quote API Client
+
+- Started: 2026-09-01 23:14:24 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 23:14:24 +0100
+
+```text
+Implement frontend API configuration and the policy quote API client service.
+
+
+
+Changes:
+
+- Add API base URL configuration under `apps/frontend/src/core/api/`
+- Configure Angular `HttpClient` in the app bootstrap/config.
+- Create `apps/frontend/src/features/policy-quote/policy-quote.service.ts`
+- The service should expose:
+  - `getQuoteUiInputs()` calling `GET /policy/quote/ui-inputs`
+  - `createQuote(request)` calling `POST /policy/quote`
+- Use shared types from `@policy-quote/api-contract`
+- Do not calculate premiums, risk score, risk band, or applied factors in the frontend.
+
+Context:
+
+- [frontend.md](docs/frontend.md)
+- [architecture.md](docs/architecture.md)
+- [backend.md](docs/backend.md)&#x20;
+
+Verification:
+
+- Add unit test and make sure they pass
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Added frontend API base URL configuration, Angular HttpClient bootstrap wiring, and the policy quote API client service.
+- Added focused Jest coverage for quote UI metadata requests, quote creation requests, and trailing-slash API base URL normalization.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/frontend/src/app.config.ts`
+- `apps/frontend/src/core/api/api-base-url.ts`
+- `apps/frontend/src/core/api/index.ts`
+- `apps/frontend/src/features/policy-quote/policy-quote.service.test.ts`
+- `apps/frontend/src/features/policy-quote/policy-quote.service.ts`
+- `apps/frontend/src/main.ts`
+
+### What Changes were suggest by the user
+
+- Implement the approved Frontend Policy Quote API Client plan.
+- Update the current session log using the `agent-log-session` skill.
