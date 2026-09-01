@@ -33,6 +33,7 @@ export const baseConfig = defineConfig(
     "**/.turbo/**",
     "**/coverage/**",
     "**/dist/**",
+    "**/*.d.ts",
     "**/node_modules/**",
     "**/pnpm-lock.yaml"
   ]),

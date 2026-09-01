@@ -307,3 +307,61 @@ Dont assume anything ask me question if needed.
 - Implement the approved risk engine service plan.
 - Ignore `perOccurrence` while calculating matched factor points.
 - Use the `agent-log-session` skill to update this session entry manually.
+
+## Session: Risk KB Factor Authoring Skill
+
+- Started: 2026-09-01 17:49:03 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 17:49:03 +0100
+
+```text
+Implement a new skill in the project to and a new risk factor in [risk-kb.json](kb/risk-kb.json) which allows anyone to a new risk factor in [risk-kb.json](kb/risk-kb.json) without adding breaking changes.
+
+
+
+Behaviour
+
+- The skill should allow use to input something is "if propertyType = "Falt" and age <= 25 " add 10 points.
+- The skill should ask user for input if some of the input that are required for the [risk-kb.json](kb/risk-kb.json) schema is not satisfy.
+- The edit should be done on a back of [risk-kb.json](kb/risk-kb.json) &#x20;
+- There should be a script which uses `parseKnowledgeBase` function from knowledge base to verify the changes done to [risk-kb.json](kb/risk-kb.json) backup are correct&#x20;
+- And only when the script passes the oringal [risk-kb.json](kb/risk-kb.json) should be updated&#x20;
+
+Context:
+
+- [backend.md](docs/backend.md)&#x20;
+- [kb.md](docs/kb.md)
+```
+
+### Summary of change
+
+- Added a project skill for backup-first risk KB factor authoring with guidance for missing schema data, unsupported select values, and supported condition translation.
+- Added TypeScript backup check and promotion scripts that run through `tsx` and validate `kb/risk-kb.json.backup` with `parseKnowledgeBase` before copying it over the active KB.
+- Added a standalone backup check script and wired promotion to reuse that validation before copying.
+- Added Jest coverage for valid promotion, invalid backup preservation, schema-version rejection, and missing backup failures.
+- Exported `parseKnowledgeBase` from the backend knowledge-base barrel and added root package scripts for validated backup checking and promotion.
+
+### What Changed
+
+- `.agents/skills/risk-kb-factor/SKILL.md`
+- `.gitignore`
+- `AGENT_LOG.md`
+- `apps/backend/src/services/knowledgeBase/index.ts`
+- `package.json`
+- `pnpm-lock.yaml`
+- `scripts/check-risk-kb-backup.ts`
+- `scripts/promote-risk-kb-backup.ts`
+- `scripts/promote-risk-kb-backup.test.ts`
+- `tsconfig.json`
+
+### What Changes were suggest by the user
+
+- Implement the approved risk KB factor authoring skill plan.
+- Do not add the example factor to the active KB.
+- Leave the KB business `version` unchanged.
+- Add a script to validate the backup with `parseKnowledgeBase` and promote only after that validation succeeds.
+- Run the KB scripts through `tsx` and convert them to TypeScript without adding `.js` import extensions.

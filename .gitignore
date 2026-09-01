@@ -16,6 +16,9 @@ npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 
+# Local KB candidate workflow files
+kb/risk-kb.json.backup
+
 # Environment / local secrets
 .env
 .env.*
