@@ -909,3 +909,68 @@ Dont assume anything ask me question if needed.
 
 - Implement the approved Frontend Policy Quote API Client plan.
 - Update the current session log using the `agent-log-session` skill.
+
+## Session: Policy Quote Form Builder
+
+- Started: 2026-09-01 23:37:55 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 23:37:55 +0100
+
+```text
+Implement the policy quote form builder for the Angular frontend.
+
+
+
+Changes:
+
+- Create `apps/frontend/src/features/policy-quote/policy-quote.form.ts`
+- Add a function that accepts `UIInput[]` from `@policy-quote/api-contract` and returns a Reactive Form group.
+- Derive validators from the Knowledge Base provided input metadata:
+  - `required`
+  - `min`
+  - `max`
+  - select `options`
+- Use sensible default values:
+  - text fields: empty string
+  - number fields: null
+  - select fields: empty string
+- Keep the form builder generic and driven by `uiInputs` do not hardcode policy quote field names.
+- Add focused unit tests for:
+  - required validation
+  - min/max validation
+  - select option validation
+  - default values
+  - unknown/hardcoded field assumptions avoided
+
+Context:
+
+- [frontend.md](docs/frontend.md)
+
+
+
+Verification:
+
+- Add unit test checking the success path and all edge cases and make sure the unit test pass.
+
+Dont assume anything ask me question if needed.&#x20;
+```
+
+### Summary of change
+
+- Added a metadata-driven Angular Reactive Forms builder for policy quote UI inputs.
+- Derived required, number min/max, and select option validators from `UIInput` metadata.
+- Added focused Jest coverage for defaults, validation behavior, success path, and arbitrary metadata field IDs.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/frontend/src/features/policy-quote/policy-quote.form.test.ts`
+- `apps/frontend/src/features/policy-quote/policy-quote.form.ts`
+
+### What Changes were suggest by the user
+
+- Asked to implement the approved Policy Quote Form Builder plan.
