@@ -5,14 +5,14 @@ CDK_TEMPLATE ?= packages/infra/cdk.out/PolicyQuoteInfraStack.template.json
 
 .DEFAULT_GOAL := help
 
-.PHONY: help install dev-serverless dev-frontend dev-serverless-api build test lint typecheck format-check serverless-api-synth serverless-api-up
+.PHONY: help install dev-serverless frontend-up dev-serverless-api build test lint typecheck format-check serverless-api-synth serverless-api-up
 
 help:
 	@printf '%s\n' \
 		'Available targets:' \
 		'  make install' \
 		'  make dev-serverless' \
-		'  make dev-frontend' \
+		'  make frontend-up' \
 		'  make dev-serverless-api' \
 		'  make build' \
 		'  make test' \
@@ -28,7 +28,7 @@ install:
 dev-serverless:
 	@$(MAKE) dev-serverless-api & \
 	api_pid=$$!; \
-	$(MAKE) dev-frontend & \
+	$(MAKE) frontend-up & \
 	frontend_pid=$$!; \
 	trap 'kill $$api_pid $$frontend_pid 2>/dev/null; wait $$api_pid $$frontend_pid 2>/dev/null' INT TERM EXIT; \
 	while :; do \
@@ -49,7 +49,7 @@ dev-serverless:
 		sleep 1; \
 	done
 
-dev-frontend:
+frontend-up:
 	$(PNPM) --filter @policy-quote/frontend --fail-if-no-match dev
 
 dev-serverless-api: serverless-api-up
