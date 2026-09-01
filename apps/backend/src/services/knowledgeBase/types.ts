@@ -55,6 +55,7 @@ export const simpleConditionV1Schema = z.discriminatedUnion("operator", [
 ]);
 
 export type SimpleConditionV1 = z.infer<typeof simpleConditionV1Schema>;
+export type RiskOperatorV1 = SimpleConditionV1["operator"];
 
 export type KnowledgeBaseConditionV1 =
   | SimpleConditionV1
@@ -83,13 +84,15 @@ export const riskBandV1Schema = z.object({
   riskMultiplier: z.number()
 });
 
-export const factorV1Schema = z.object({
+export const riskFactorV1Schema = z.object({
   id: z.string().min(1),
   description: z.string().min(1),
   condition: knowledgeBaseConditionV1Schema,
   points: z.number(),
   perOccurrence: z.boolean().optional()
 });
+
+export type RiskFactorV1 = z.infer<typeof riskFactorV1Schema>;
 
 export const knowledgeBaseV1Schema = z.object({
   kbSchemaVersion: z.literal("1.0.0"),
@@ -102,7 +105,7 @@ export const knowledgeBaseV1Schema = z.object({
     HIGH_RISK: riskBandV1Schema
   }),
   uiInputs: z.array(uiInputV1Schema),
-  factors: z.array(factorV1Schema)
+  factors: z.array(riskFactorV1Schema)
 });
 
 export type KnowledgeBaseV1 = z.infer<typeof knowledgeBaseV1Schema>;

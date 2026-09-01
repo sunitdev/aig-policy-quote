@@ -240,3 +240,70 @@ Expected behavuour.
 - Move KnowledgeBase shared types to `apps/backend/src/services/knowledgeBase/types.ts`.
 - Rename `knowledgeBase.service.ts` to `service.ts`.
 - Use Jest for unit tests and update project rules to require Jest.
+
+## Session: Risk Engine Service
+
+- Started: 2026-09-01 16:59:37 +0100
+- Agent: codex
+- Session ID: `F9FA4C88-DED6-4C2F-8224-37DCB361FD42`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 16:59:37 +0100
+
+```text
+Implement risk engine service in `apps/backend/services`.&#x20;
+
+
+
+Behaviour:
+
+- Change `factorV1Schema` type name to `riskFactorV1Schema` in `apps/backend/src/services/knowledgeBase/types.ts`
+- The risk engine should be generic and driven by knowledge base.
+- Service should have a function `evaluateRisk(factors: Record<string, unknown>, knowledgeBase: KnowledgeBase): number`. This function should return the total of points for all factors condition match for  `knowledgeBase.factors`
+  - The `evaluateRisk` function should loop for each `knowledgeBase.factors` and call `isRiskConditionTrue(factors, riskFactor)`
+  - If `isRiskConditionTrue` return true then the point should be considered to be total calculation or ignored.
+- The `isRishConditionTrue` function should first check if the risk factor is simpleConditionV1Schema or conditional factor like `all` and `or`
+  - If it is conditional `all` each sub risk factor should be called with `.every()` similar for conditional `or` each sub risk facto should be called with `.some()`
+  - For other simple risk factor call `evaulteOperator(factors, riskFactor)`function.
+- There should be an operatorEvaluation object const defined at root level of type Record\<operator, (input) -> boolean) . For each operator in the object the function much check if the input has value of right time and the based on the operator it should compare and return true or false.
+- The `evaulteOperator` function should use operatorEvaluation object to check if the operator exists and if yes can the predicate function for the operator and return the vaule.
+
+Context:
+
+- [backend.md](docs/backend.md)&#x20;
+- [kb.md](docs/kb.md)&#x20;
+
+
+
+Verification:
+
+- Use a sample input factor and [risk-kb.json](kb/risk-kb.json) in unit test and compare if the vault computed is correct.
+- Add unit test for various edge cases like condition operators, edge cases values, wrong value types and other edge cases.
+
+
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Added a generic KB-driven risk engine service that evaluates simple, `all`, `or`, and nested compound conditions.
+- Added supported operator evaluation for `eq`, `gt`, `gte`, `between`, and `outside_range`, with wrong or missing input values returning no match.
+- Renamed the KB factor schema export to `riskFactorV1Schema` and added factor/operator TypeScript aliases.
+- Updated `evaluateRisk` to return the matching KB factors in order instead of returning a numeric total.
+- Added backend Jest coverage for real KB factor matching, ignored `perOccurrence`, operator boundaries, wrong value types, unsupported operators, and compound conditions.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/backend/src/services/knowledgeBase/types.ts`
+- `apps/backend/src/services/riskEngine/index.ts`
+- `apps/backend/src/services/riskEngine/service.ts`
+- `apps/backend/src/services/riskEngine/service.test.ts`
+
+### What Changes were suggest by the user
+
+- Implement the approved risk engine service plan.
+- Ignore `perOccurrence` while calculating matched factor points.
+- Use the `agent-log-session` skill to update this session entry manually.
