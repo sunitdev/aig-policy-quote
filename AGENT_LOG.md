@@ -974,3 +974,78 @@ Dont assume anything ask me question if needed.&#x20;
 ### What Changes were suggest by the user
 
 - Asked to implement the approved Policy Quote Form Builder plan.
+
+## Session: Policy Quote Form Rendering
+
+- Started: 2026-09-02 00:02:11 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-02 00:02:11 +0100
+
+```text
+Implement the Policy Quote page form rendering.
+
+
+
+Changes:
+
+- Create `apps/frontend/src/features/policy-quote/policy-quote.page.ts`, `apps/frontend/src/features/policy-quote/policy-quote.page.html` and `apps/frontend/src/features/policy-quote/policy-quote.page.css`.
+- Replace the temporary app shell showcase with the Policy Quote page.
+- On page load, call `getQuoteUiInputs()` from `policy-quote.service.ts`.
+- Build the Reactive Form using `policy-quote.form.ts`.
+- Render form controls dynamically from `uiInputs`
+  - `text` -> shared text input
+  - `number` -> shared number input
+  - `select` -> shared select input
+- Use Signals for
+  - metadata loading state
+  - error message
+
+* Do not hardcode policy quote field names in the page.
+
+Context:
+
+- [frontend.md](docs/frontend.md)
+
+Verification:
+
+- Run `make dev-serverless` starts API and frontend.
+- Frontend loads fields from `GET /policy/quote/ui-inputs`.
+- Angular builds without errors.
+
+Dont assume anything ask me question if needed.&#x20;
+```
+
+### Summary of change
+
+- Added a standalone Policy Quote page that loads UI metadata on initialization and builds the Reactive Form from `uiInputs`.
+- Rendered text, number, and select shared controls dynamically from backend-provided metadata without hardcoded policy field names.
+- Replaced the temporary shared UI showcase shell with the Policy Quote page.
+- Added CORS headers to Lambda JSON responses and API Gateway preflight configuration so the Angular frontend can call the local SAM API from a different browser origin.
+- Added `Cache-Control: no-transform` to JSON Lambda responses so Middy content encoding does not produce compressed base64 payloads that SAM local serves in a browser-incompatible shape.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/backend/src/api/http-response.test.ts`
+- `apps/backend/src/api/http-response.ts`
+- `apps/backend/src/lambda/create-quote.test.ts`
+- `apps/backend/src/lambda/health.test.ts`
+- `apps/backend/src/lambda/quote-ui-inputs.test.ts`
+- `apps/frontend/src/app-shell/app.component.css`
+- `apps/frontend/src/app-shell/app.component.html`
+- `apps/frontend/src/app-shell/app.component.ts`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.css`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.html`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.ts`
+- `packages/infra/app.test.ts`
+- `packages/infra/app.ts`
+
+### What Changes were suggest by the user
+
+- Asked to implement the approved Policy Quote Form Rendering plan.
+- Discovered a browser CORS error when `http://localhost:4200` called `http://127.0.0.1:3000/policy/quote/ui-inputs` and directed the fix to allow the frontend origin through Lambda/API Gateway CORS headers and preflight configuration.
+- Discovered `net::ERR_CONTENT_DECODING_FAILED 200 (OK)` for the policy quote UI metadata request and directed the fix to prevent compressed/transformed JSON responses from being served in a browser-incompatible shape.

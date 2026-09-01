@@ -1,0 +1,61 @@
+<main class="policy-quote-page" aria-labelledby="policy-quote-title">
+  <section class="policy-quote-page__header">
+    <p class="policy-quote-page__eyebrow">Policy Quote</p>
+    <h1 id="policy-quote-title">Create a policy quote</h1>
+    <p class="policy-quote-page__intro">
+      Enter the customer and property details needed to prepare the quote.
+    </p>
+  </section>
+
+  @if (isMetadataLoading()) {
+  <section class="policy-quote-state" aria-live="polite">
+    <p>Loading quote fields...</p>
+  </section>
+  } @else if (errorMessage()) {
+  <section class="policy-quote-state policy-quote-state--error" role="alert">
+    <p>{{ errorMessage() }}</p>
+  </section>
+  } @else if (uiInputs().length === 0) {
+  <section class="policy-quote-state" aria-live="polite">
+    <p>No quote fields are available.</p>
+  </section>
+  } @else {
+  <form class="policy-quote-form" [formGroup]="form">
+    <div class="policy-quote-form__grid">
+      @for (input of uiInputs(); track input.id) { @switch (input.type) { @case ("text") {
+      <app-text-input
+        [label]="input.label"
+        [helpText]="helpTextFor(input)"
+        [required]="isRequired(input)"
+        [name]="input.id"
+        [formControl]="controlFor(input.id)"
+      />
+      } @case ("number") {
+      <app-number-input
+        [label]="input.label"
+        [helpText]="helpTextFor(input)"
+        [required]="isRequired(input)"
+        [name]="input.id"
+        [min]="minFor(input)"
+        [max]="maxFor(input)"
+        [formControl]="controlFor(input.id)"
+      />
+      } @case ("select") {
+      <app-select-input
+        [label]="input.label"
+        [helpText]="helpTextFor(input)"
+        [required]="isRequired(input)"
+        [name]="input.id"
+        placeholder="Choose an option"
+        [options]="selectOptionsFor(input)"
+        [formControl]="controlFor(input.id)"
+      />
+      } } }
+    </div>
+
+    <div class="policy-quote-form__actions">
+      <app-button type="button" disabled>Prepare quote</app-button>
+    </div>
+  </form>
+  }
+</main>

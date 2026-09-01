@@ -1,0 +1,90 @@
+.policy-quote-page {
+  display: grid;
+  gap: var(--space-8);
+  margin: 0 auto;
+  max-width: calc(var(--space-12) * 22);
+  padding: var(--space-10) var(--space-5) var(--space-12);
+  width: 100%;
+}
+
+.policy-quote-page__header {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.policy-quote-page__eyebrow {
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  margin: 0;
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+h1 {
+  color: var(--color-text);
+  font-size: var(--font-size-2xl);
+}
+
+.policy-quote-page__intro {
+  color: var(--color-muted);
+  font-size: var(--font-size-md);
+  max-width: calc(var(--space-12) * 13);
+}
+
+.policy-quote-state {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-secondary);
+  padding: var(--space-5);
+}
+
+.policy-quote-state--error {
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.policy-quote-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.policy-quote-form__grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--space-12) * 6)), 1fr));
+}
+
+.policy-quote-form__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .policy-quote-page {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .policy-quote-form {
+    padding: var(--space-5);
+  }
+
+  .policy-quote-form__actions {
+    justify-content: stretch;
+  }
+
+  .policy-quote-form__actions app-button {
+    width: 100%;
+  }
+}

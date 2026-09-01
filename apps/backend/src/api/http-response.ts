@@ -5,6 +5,12 @@ interface JsonResponseOptions {
   statusCode?: number;
 }
 
+const defaultCorsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-headers": "content-type",
+  "access-control-allow-methods": "GET,POST,OPTIONS"
+};
+
 export function jsonResponse(
   body: unknown,
   { headers = {}, statusCode = 200 }: JsonResponseOptions = {}
@@ -13,6 +19,8 @@ export function jsonResponse(
     statusCode,
     headers: {
       "content-type": "application/json",
+      "cache-control": "no-transform",
+      ...defaultCorsHeaders,
       ...headers
     },
     body: JSON.stringify(body)

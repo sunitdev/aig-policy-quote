@@ -25,6 +25,10 @@ describe("create quote handler", () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.headers).toEqual({
+      "access-control-allow-headers": "content-type",
+      "access-control-allow-methods": "GET,POST,OPTIONS",
+      "access-control-allow-origin": "*",
+      "cache-control": "no-transform",
       "content-type": "application/json"
     });
     expect(JSON.parse(response.body)).toMatchObject({

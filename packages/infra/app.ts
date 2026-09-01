@@ -70,6 +70,11 @@ export class PolicyQuoteInfraStack extends cdk.Stack {
     });
 
     const api = new apigateway.RestApi(this, "PolicyQuoteApi", {
+      defaultCorsPreflightOptions: {
+        allowHeaders: ["content-type"],
+        allowMethods: ["GET", "POST", "OPTIONS"],
+        allowOrigins: apigateway.Cors.ALL_ORIGINS
+      },
       deployOptions: {
         stageName: "dev"
       },

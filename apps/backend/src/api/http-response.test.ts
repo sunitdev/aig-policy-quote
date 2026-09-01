@@ -8,6 +8,10 @@ describe("jsonResponse", () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.headers).toEqual({
+      "access-control-allow-headers": "content-type",
+      "access-control-allow-methods": "GET,POST,OPTIONS",
+      "access-control-allow-origin": "*",
+      "cache-control": "no-transform",
       "content-type": "application/json"
     });
     expect(response.body).toBe(JSON.stringify({ status: "ok" }));
@@ -28,8 +32,11 @@ describe("jsonResponse", () => {
 
     expect(response.statusCode).toBe(201);
     expect(response.headers).toEqual({
-      "content-type": "application/json",
-      "cache-control": "no-store"
+      "access-control-allow-headers": "content-type",
+      "access-control-allow-methods": "GET,POST,OPTIONS",
+      "access-control-allow-origin": "*",
+      "cache-control": "no-store",
+      "content-type": "application/json"
     });
     expect(response.body).toBe(JSON.stringify({ message: "created" }));
   });
@@ -41,6 +48,10 @@ describe("errorResponse", () => {
 
     expect(response.statusCode).toBe(400);
     expect(response.headers).toEqual({
+      "access-control-allow-headers": "content-type",
+      "access-control-allow-methods": "GET,POST,OPTIONS",
+      "access-control-allow-origin": "*",
+      "cache-control": "no-transform",
       "content-type": "application/json"
     });
     expect(response.body).toBe(JSON.stringify({ message: "Invalid request" }));
@@ -56,8 +67,11 @@ describe("errorResponse", () => {
 
     expect(response.statusCode).toBe(404);
     expect(response.headers).toEqual({
-      "content-type": "application/json",
-      "cache-control": "no-store"
+      "access-control-allow-headers": "content-type",
+      "access-control-allow-methods": "GET,POST,OPTIONS",
+      "access-control-allow-origin": "*",
+      "cache-control": "no-store",
+      "content-type": "application/json"
     });
     expect(response.body).toBe(JSON.stringify({ message: "Not found" }));
   });

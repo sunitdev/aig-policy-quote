@@ -11,6 +11,8 @@ describe("PolicyQuoteInfraStack", () => {
 
     expect(appSource).toContain('"QuoteUiInputsFunction"');
     expect(appSource).toContain('"quote-ui-inputs.ts"');
+    expect(appSource).toContain("defaultCorsPreflightOptions");
+    expect(appSource).toContain("allowOrigins: apigateway.Cors.ALL_ORIGINS");
     expect(appSource).toContain('addResource("policy")');
     expect(appSource).toContain('addResource("quote")');
     expect(appSource).toContain('addResource("ui-inputs")');
