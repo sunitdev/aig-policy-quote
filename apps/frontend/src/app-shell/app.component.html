@@ -1,3 +1,153 @@
-<main class="hello-page" aria-label="Hello World">
-  <h1>{{ message }}</h1>
+<main class="showcase-page" aria-labelledby="showcase-title">
+  <section class="showcase-hero">
+    <p class="showcase-eyebrow">Shared UI</p>
+    <h1 id="showcase-title">Reusable component foundation</h1>
+    <p class="showcase-intro">
+      Standalone Angular controls built from the global design tokens for quote workflows and future
+      frontend features.
+    </p>
+  </section>
+
+  <section class="showcase-section" aria-labelledby="button-title">
+    <div class="showcase-section__header">
+      <p class="showcase-eyebrow">Actions</p>
+      <h2 id="button-title">Button variants</h2>
+    </div>
+    <div class="button-grid">
+      <app-button>Primary action</app-button>
+      <app-button variant="secondary">Secondary action</app-button>
+      <app-button variant="danger">Danger action</app-button>
+      <app-button variant="ghost">Ghost action</app-button>
+      <app-button disabled>Disabled action</app-button>
+      <app-button loading>Loading action</app-button>
+    </div>
+  </section>
+
+  <section class="showcase-section" aria-labelledby="card-title">
+    <div class="showcase-section__header">
+      <p class="showcase-eyebrow">Surfaces</p>
+      <h2 id="card-title">Card variants</h2>
+    </div>
+    <div class="card-grid">
+      <app-card>
+        <div appCardHeader>
+          <h3>Default card</h3>
+        </div>
+        <p>Use this surface for standard grouped content and form sections.</p>
+        <div appCardFooter>
+          <app-button variant="secondary">Review</app-button>
+        </div>
+      </app-card>
+      <app-card variant="subtle">
+        <div appCardHeader>
+          <h3>Subtle card</h3>
+        </div>
+        <p>Use this quieter surface where the page already provides the main visual frame.</p>
+        <div appCardFooter>
+          <app-button variant="ghost">Dismiss</app-button>
+        </div>
+      </app-card>
+      <app-card variant="elevated">
+        <div appCardHeader>
+          <h3>Elevated card</h3>
+        </div>
+        <p>Use this treatment when a block needs stronger separation from surrounding content.</p>
+        <div appCardFooter>
+          <app-button>Continue</app-button>
+        </div>
+      </app-card>
+    </div>
+  </section>
+
+  <section class="showcase-section" aria-labelledby="field-title">
+    <div class="showcase-section__header">
+      <p class="showcase-eyebrow">Forms</p>
+      <h2 id="field-title">Input states</h2>
+    </div>
+    <div class="field-grid">
+      <app-text-input
+        label="Insured name"
+        helpText="Plain text input connected through Reactive Forms."
+        placeholder="Enter insured name"
+        required
+        [formControl]="textInputControl"
+      />
+      <app-text-input
+        label="Invalid text"
+        errorText="Enter at least three characters."
+        required
+        [formControl]="invalidTextInputControl"
+      />
+      <app-text-input
+        label="Disabled text"
+        helpText="Disabled state from a form control."
+        [formControl]="disabledTextInputControl"
+      />
+      <app-text-input
+        label="Readonly text"
+        helpText="Readonly values remain focusable and available to assistive tech."
+        readonly
+        [formControl]="readonlyTextInputControl"
+      />
+
+      <app-number-input
+        label="Declared value"
+        helpText="Supports min, max, and step attributes."
+        placeholder="Enter declared value"
+        [min]="1"
+        [max]="5000000"
+        [step]="5000"
+        required
+        [formControl]="numberInputControl"
+      />
+      <app-number-input
+        label="Invalid number"
+        errorText="Value must be greater than zero."
+        [min]="1"
+        required
+        [formControl]="invalidNumberInputControl"
+      />
+      <app-number-input
+        label="Disabled number"
+        helpText="Disabled state from a form control."
+        [formControl]="disabledNumberInputControl"
+      />
+      <app-number-input
+        label="Readonly number"
+        helpText="Readonly numeric values can still be selected and copied."
+        readonly
+        [formControl]="readonlyNumberInputControl"
+      />
+
+      <app-select-input
+        label="Product"
+        helpText="Options use a reusable label/value shape."
+        placeholder="Choose a product"
+        required
+        [options]="productOptions"
+        [formControl]="selectInputControl"
+      />
+      <app-select-input
+        label="Invalid select"
+        errorText="Choose an option to continue."
+        placeholder="Choose a product"
+        required
+        [options]="productOptions"
+        [formControl]="invalidSelectInputControl"
+      />
+      <app-select-input
+        label="Disabled select"
+        helpText="Disabled state from a form control."
+        [options]="productOptions"
+        [formControl]="disabledSelectInputControl"
+      />
+      <app-select-input
+        label="Readonly select"
+        helpText="Readonly select prevents changes without dropping form value."
+        readonly
+        [options]="productOptions"
+        [formControl]="readonlySelectInputControl"
+      />
+    </div>
+  </section>
 </main>

@@ -711,3 +711,82 @@ Dont assume anything ask me question if required.
 ### What Changes were suggest by the user
 
 - Implement the approved Angular design system foundation plan.
+
+## Session: Shared UI Components
+
+- Started: 2026-09-01 22:27:29 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 22:27:29 +0100
+
+```text
+Build the first set of reusable shared UI components using the existing design tokens inside `apps/frontend/src/styles.css`
+
+
+
+Changes:
+
+- Create shared components for:
+  - Button
+  - Text Input
+  - Number Input
+  - Card
+  - Select Input
+- Follow the existing structure in [frontend.md](docs/frontend.md)&#x20;
+- Use only the existing design tokens for styling.
+- Make components standalone, reusable, accessible, and responsive.
+- Support basic variants and states where appropriate.
+- Update the home page to showcase all shared components and their available variants/states.
+
+Context:
+
+- [frontend.md](docs/frontend.md)&#x20;
+
+Verification:
+
+- `make frontend-up` starts the frontend successfully.
+- Angular builds without errors.
+- Home page displays all shared components.
+- Components use the design tokens and have no unnecessary hard-coded styles.
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Added the first standalone shared UI component set for buttons, cards, text inputs, number inputs, and select inputs.
+- Implemented form-ready ControlValueAccessor inputs with accessible built-in label, help, required, readonly, disabled, and error states.
+- Replaced the Hello World app shell with a responsive shared component showcase using existing design tokens.
+- Added Angular Reactive Forms to the frontend package and verified build, typecheck, lint, dev-server startup, and browser rendering.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/frontend/package.json`
+- `apps/frontend/src/app-shell/app.component.css`
+- `apps/frontend/src/app-shell/app.component.html`
+- `apps/frontend/src/app-shell/app.component.ts`
+- `apps/frontend/src/shared/ui/button/button.component.css`
+- `apps/frontend/src/shared/ui/button/button.component.html`
+- `apps/frontend/src/shared/ui/button/button.component.ts`
+- `apps/frontend/src/shared/ui/card/card.component.css`
+- `apps/frontend/src/shared/ui/card/card.component.html`
+- `apps/frontend/src/shared/ui/card/card.component.ts`
+- `apps/frontend/src/shared/ui/index.ts`
+- `apps/frontend/src/shared/ui/number-input/number-input.component.css`
+- `apps/frontend/src/shared/ui/number-input/number-input.component.html`
+- `apps/frontend/src/shared/ui/number-input/number-input.component.ts`
+- `apps/frontend/src/shared/ui/select-input/select-input.component.css`
+- `apps/frontend/src/shared/ui/select-input/select-input.component.html`
+- `apps/frontend/src/shared/ui/select-input/select-input.component.ts`
+- `apps/frontend/src/shared/ui/text-input/text-input.component.css`
+- `apps/frontend/src/shared/ui/text-input/text-input.component.html`
+- `apps/frontend/src/shared/ui/text-input/text-input.component.ts`
+- `pnpm-lock.yaml`
+
+### What Changes were suggest by the user
+
+- Implement the approved shared UI components plan.

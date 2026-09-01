@@ -1,0 +1,32 @@
+<label class="ui-field" [for]="inputId">
+  <span class="ui-field__label">
+    {{ label }}
+    @if (required) {
+      <span class="ui-field__required" aria-hidden="true">*</span>
+    }
+  </span>
+  <input
+    class="ui-field__control"
+    type="number"
+    [id]="inputId"
+    [name]="name"
+    [placeholder]="placeholder"
+    [required]="required"
+    [disabled]="isDisabled"
+    [readOnly]="readonly"
+    [value]="renderedValue"
+    [attr.min]="min"
+    [attr.max]="max"
+    [attr.step]="step"
+    [attr.aria-invalid]="hasError ? 'true' : null"
+    [attr.aria-describedby]="describedBy"
+    (input)="handleInput($event)"
+    (blur)="handleBlur()"
+  />
+  @if (helpText) {
+    <span class="ui-field__help" [id]="helpId">{{ helpText }}</span>
+  }
+  @if (errorText) {
+    <span class="ui-field__error" [id]="errorId">{{ errorText }}</span>
+  }
+</label>
