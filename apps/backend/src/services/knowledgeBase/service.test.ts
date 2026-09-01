@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { ZodError } from "zod";
 
 import { defaultRiskKnowledgeBasePath } from "./constants";
-import { getKnowledgeBase, loadKnowledgeBase, parseKnowledgeBase } from "./service";
+import { getKnowledgeBase, getUIInputs, loadKnowledgeBase, parseKnowledgeBase } from "./service";
 import type { KnowledgeBaseV1 } from "./types";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
@@ -130,6 +130,21 @@ describe("KnowledgeBase service", () => {
       expect(secondKnowledgeBase).not.toBe(firstKnowledgeBase);
       expect(firstKnowledgeBase.version).toBe("cache-path-a");
       expect(secondKnowledgeBase.version).toBe("cache-path-b");
+    });
+  });
+
+  describe("getUIInputs", () => {
+    it("returns the knowledge base uiInputs array content without wrapping it", () => {
+      const knowledgeBase = validKnowledgeBase();
+
+      expect(getUIInputs({ knowledgeBase })).toEqual(knowledgeBase.uiInputs);
+    });
+
+    it("loads uiInputs from the active knowledge base path", () => {
+      const knowledgeBase = validKnowledgeBase({ version: "ui-inputs-path-test" });
+      const path = writeKnowledgeBaseFile(knowledgeBase);
+
+      expect(getUIInputs({ knowledgeBasePath: path })).toEqual(knowledgeBase.uiInputs);
     });
   });
 });

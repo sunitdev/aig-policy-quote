@@ -5,9 +5,13 @@ export {
   quoteRequestSchema,
   quoteResponseSchema,
   riskBandSchema,
+  uiInputSchema,
+  uiInputsResponseSchema,
   type AppliedFactor,
   type CoverageDetails,
   type QuoteRequest,
   type QuoteResponse,
-  type RiskBand
+  type RiskBand,
+  type UIInput,
+  type UIInputsResponse
 } from "./quotes.contract";

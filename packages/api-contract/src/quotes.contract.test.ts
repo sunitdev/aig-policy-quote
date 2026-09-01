@@ -1,9 +1,63 @@
 import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
 
-import { quoteRequestSchema, quoteResponseSchema } from "./quotes.contract";
+import { quoteRequestSchema, quoteResponseSchema, uiInputsResponseSchema } from "./quotes.contract";
 
 describe("quotes contract", () => {
+  describe("uiInputsResponseSchema", () => {
+    it("accepts the public quote UI input response shape", () => {
+      expect(
+        uiInputsResponseSchema.parse([
+          {
+            id: "customerName",
+            type: "text",
+            label: "Full Name",
+            description: "Full name of the policyholder",
+            required: true
+          },
+          {
+            id: "age",
+            label: "Age",
+            description: "Age of the policyholder",
+            required: true,
+            type: "number",
+            min: 18,
+            max: 100
+          },
+          {
+            id: "propertyType",
+            type: "select",
+            label: "Type of property",
+            options: ["House", "Flat", "Bungalow"]
+          }
+        ])
+      ).toEqual([
+        {
+          id: "customerName",
+          type: "text",
+          label: "Full Name",
+          description: "Full name of the policyholder",
+          required: true
+        },
+        {
+          id: "age",
+          label: "Age",
+          description: "Age of the policyholder",
+          required: true,
+          type: "number",
+          min: 18,
+          max: 100
+        },
+        {
+          id: "propertyType",
+          type: "select",
+          label: "Type of property",
+          options: ["House", "Flat", "Bungalow"]
+        }
+      ]);
+    });
+  });
+
   describe("quoteRequestSchema", () => {
     it("accepts a direct quote factor object", () => {
       expect(

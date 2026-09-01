@@ -15,6 +15,20 @@ const infraNodeModulesBinPath = path.join(appDirectory, "node_modules", ".bin");
 const bundlingEnvironment = {
   PATH: `${infraNodeModulesBinPath}:${process.env.PATH ?? ""}`
 };
+const riskKnowledgeBaseBundlingCommandHooks = {
+  afterBundling(_inputDir: string, outputDir: string): string[] {
+    return [
+      `mkdir -p ${path.join(outputDir, "kb")}`,
+      `cp ${riskKnowledgeBasePath} ${path.join(outputDir, riskKnowledgeBaseRelativePath)}`
+    ];
+  },
+  beforeBundling(): string[] {
+    return [];
+  },
+  beforeInstall(): string[] {
+    return [];
+  }
+};
 
 export class PolicyQuoteInfraStack extends cdk.Stack {
   public constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -31,23 +45,23 @@ export class PolicyQuoteInfraStack extends cdk.Stack {
 
     const createQuoteFunction = new lambdaNodejs.NodejsFunction(this, "CreateQuoteFunction", {
       bundling: {
-        commandHooks: {
-          afterBundling(_inputDir: string, outputDir: string): string[] {
-            return [
-              `mkdir -p ${path.join(outputDir, "kb")}`,
-              `cp ${riskKnowledgeBasePath} ${path.join(outputDir, riskKnowledgeBaseRelativePath)}`
-            ];
-          },
-          beforeBundling(): string[] {
-            return [];
-          },
-          beforeInstall(): string[] {
-            return [];
-          }
-        },
+        commandHooks: riskKnowledgeBaseBundlingCommandHooks,
         environment: bundlingEnvironment
       },
       entry: path.join(backendDirectory, "src", "lambda", "create-quote.ts"),
+      environment: {
+        RISK_KB_PATH: riskKnowledgeBaseRelativePath
+      },
+      handler: "handler",
+      runtime: lambda.Runtime.NODEJS_22_X
+    });
+
+    const quoteUiInputsFunction = new lambdaNodejs.NodejsFunction(this, "QuoteUiInputsFunction", {
+      bundling: {
+        commandHooks: riskKnowledgeBaseBundlingCommandHooks,
+        environment: bundlingEnvironment
+      },
+      entry: path.join(backendDirectory, "src", "lambda", "quote-ui-inputs.ts"),
       environment: {
         RISK_KB_PATH: riskKnowledgeBaseRelativePath
       },
@@ -69,6 +83,9 @@ export class PolicyQuoteInfraStack extends cdk.Stack {
     const policyResource = api.root.addResource("policy");
     const quoteResource = policyResource.addResource("quote");
 
+    quoteResource
+      .addResource("ui-inputs")
+      .addMethod("GET", new apigateway.LambdaIntegration(quoteUiInputsFunction));
     quoteResource.addMethod("POST", new apigateway.LambdaIntegration(createQuoteFunction));
   }
 }

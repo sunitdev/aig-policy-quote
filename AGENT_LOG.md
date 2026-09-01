@@ -464,6 +464,66 @@ Dont assume anything ask me question if needed.
 ### What Changes were suggest by the user
 
 - Implement the approved `/policy/quote` API plan.
+
+## Session: Quote UI Inputs Endpoint
+
+- Started: 2026-09-01 21:25:29 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 21:25:29 +0100
+
+```text
+Implement the GET `/policy/quote/ui-inputs` endpoint which returns the `uiInputs` from the knowledge base.
+
+
+
+Behaviour
+
+- The endpoint should return `uiInputs` as it is.
+- In knowledge base service add a function called `getUIInputs` to return uiInput from knowledge base.
+- Add response type in `packages/api-contract`&#x20;
+- Use `apps/backend/src/lambda/create-quote.ts` lambda as a reference.
+- Add unit test
+
+
+
+Expected Behaviour
+
+- The API should run locally and it should return `uiInputs` as it is.
+
+
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Added the `GET /policy/quote/ui-inputs` Lambda endpoint returning the raw KB `uiInputs` array.
+- Added shared API contract schemas/types for quote UI inputs and reused that schema in backend KB validation.
+- Wired the new Lambda into CDK/SAM local API Gateway at `/policy/quote/ui-inputs`.
+- Added unit tests for the contract, knowledge base accessor, Lambda handler, and infra route declaration.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/backend/src/lambda/quote-ui-inputs.test.ts`
+- `apps/backend/src/lambda/quote-ui-inputs.ts`
+- `apps/backend/src/services/knowledgeBase/index.ts`
+- `apps/backend/src/services/knowledgeBase/service.test.ts`
+- `apps/backend/src/services/knowledgeBase/service.ts`
+- `apps/backend/src/services/knowledgeBase/types.ts`
+- `packages/api-contract/src/index.ts`
+- `packages/api-contract/src/quotes.contract.test.ts`
+- `packages/api-contract/src/quotes.contract.ts`
+- `packages/infra/app.test.ts`
+- `packages/infra/app.ts`
+
+### What Changes were suggest by the user
+
+- Implement the approved GET quote UI inputs endpoint plan.
 - Use per-occurrence multiplication for matching numeric factors.
 - Accept the factors object directly as the request body.
 - Include calculation details in `coverageDetails` and detailed `appliedFactors`.
