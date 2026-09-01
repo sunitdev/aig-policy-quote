@@ -60,10 +60,17 @@ p {
 }
 
 .button-grid,
+.badge-row,
 .card-grid,
 .field-grid {
   display: grid;
   gap: var(--space-4);
+}
+
+.badge-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .button-grid {

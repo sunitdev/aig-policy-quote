@@ -790,3 +790,63 @@ Dont assume anything ask me question if needed.
 ### What Changes were suggest by the user
 
 - Implement the approved shared UI components plan.
+
+## Session: Risk Band Badge Component
+
+- Started: 2026-09-01 22:58:09 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 22:58:09 +0100
+
+```text
+Create the reusable `RiskBandBadgeComponent`&#x20;
+
+
+
+Changes:
+
+- Add a standalone component at `apps/frontend/src/shared/ui/risk-band-badge/`
+- The component should accept a required `riskBand` input typed from \``@policy-quote/api-contract`\`
+- Support these values:
+  - `STANDARD`
+  - `ELEVATED`
+  - `HIGH_RISK`
+- Render a clear badge label for each band.
+- Style it using only existing design tokens from `apps/frontend/src/styles.css`.
+- Export it from \``apps/frontend/src/shared/ui/index.ts`\`.
+- Add it to the current app shell showcase temporarily so all three badge states are visible.
+
+Context:
+
+- [frontend.md](docs/frontend.md)
+- [architecture.md](docs/architecture.md)
+
+Verification:
+
+- Angular builds without errors.
+- `make frontend-up` shows the three badge variants.
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Added the reusable risk band badge component and showcased all risk band variants.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/frontend/src/app-shell/app.component.css`
+- `apps/frontend/src/app-shell/app.component.html`
+- `apps/frontend/src/app-shell/app.component.ts`
+- `apps/frontend/src/shared/ui/index.ts`
+- `apps/frontend/src/shared/ui/risk-band-badge/risk-band-badge.component.css`
+- `apps/frontend/src/shared/ui/risk-band-badge/risk-band-badge.component.html`
+- `apps/frontend/src/shared/ui/risk-band-badge/risk-band-badge.component.ts`
+
+### What Changes were suggest by the user
+
+- Implement the approved RiskBandBadgeComponent plan.

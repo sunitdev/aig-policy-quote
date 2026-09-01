@@ -1,0 +1,8 @@
+<span
+  class="risk-band-badge"
+  [class.risk-band-badge--standard]="riskBand === 'STANDARD'"
+  [class.risk-band-badge--elevated]="riskBand === 'ELEVATED'"
+  [class.risk-band-badge--high-risk]="riskBand === 'HIGH_RISK'"
+>
+  {{ label }}
+</span>

@@ -5,6 +5,7 @@ import {
   ButtonComponent,
   CardComponent,
   NumberInputComponent,
+  RiskBandBadgeComponent,
   SelectInputComponent,
   type AppSelectOption,
   TextInputComponent
@@ -18,6 +19,7 @@ import {
     CardComponent,
     NumberInputComponent,
     ReactiveFormsModule,
+    RiskBandBadgeComponent,
     SelectInputComponent,
     TextInputComponent
   ],
