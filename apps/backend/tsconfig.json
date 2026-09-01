@@ -7,6 +7,10 @@
     "moduleResolution": "Bundler",
     "noEmit": false,
     "outDir": "dist",
+    "paths": {
+      "@policy-quote/api-contract": ["packages/api-contract/dist/index.d.ts"]
+    },
+    "rootDir": "src",
     "types": ["node", "jest"]
   },
   "include": ["src/**/*.ts"]

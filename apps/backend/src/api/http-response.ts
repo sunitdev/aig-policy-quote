@@ -18,3 +18,18 @@ export function jsonResponse(
     body: JSON.stringify(body)
   };
 }
+
+export function errorResponse(
+  message: string,
+  options: Omit<JsonResponseOptions, "statusCode"> & { statusCode?: number } = {}
+): APIGatewayProxyResult {
+  return jsonResponse(
+    {
+      message
+    },
+    {
+      ...options,
+      statusCode: options.statusCode ?? 400
+    }
+  );
+}

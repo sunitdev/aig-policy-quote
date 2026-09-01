@@ -365,3 +365,113 @@ Context:
 - Leave the KB business `version` unchanged.
 - Add a script to validate the backup with `parseKnowledgeBase` and promote only after that validation succeeds.
 - Run the KB scripts through `tsx` and convert them to TypeScript without adding `.js` import extensions.
+
+## Session: Policy Quote API
+
+- Started: 2026-09-01 20:16:55 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-01 20:16:55 +0100
+
+````text
+Implement "/policy/quote" api in the backend which accepts factor as object and return the premium calculation.
+
+
+
+Behaviour:
+
+- The api should accept and object with type `Record<string, unknown>` add zod validation.
+- The api should call risk engine using the request body and knowledge base.&#x20;
+- From the risk factor return we need to calculate premium using formulae `basePremium × riskMultiplier × coverageLoadFactor`
+  - Where rishMultipler can be read from `knowledgeBase.riskBands` and comparing the value returns by the risk engine.
+  - basePermium and coverageLoadFactor can be read from the knowledgeBase.
+- The api should returns response like
+```
+{ monthlyPremium, annualPremium, riskBand, riskScore, riskSummary,
+coverageDetails, appliedFactors }
+```
+
+
+
+- Add Request and Response type in `packges/api-contract/quotes.contract.ts` &#x20;
+- Add unit test for all changes
+
+
+
+Context:
+
+- [backend.md](docs/backend.md)&#x20;
+- [kb.md](docs/kb.md)&#x20;
+
+
+
+Verification
+
+- Unit test should calcuated proper premium based on different inputs simulating different bands.
+- Unit test should pass with edge case inputs like empty object, wrong matching fields etc.
+
+
+
+Dont assume anything ask me question if needed.
+````
+
+### Summary of change
+
+- Added a Zod-backed quote request/response contract for direct factor-object requests and premium quote responses.
+- Added quote orchestration that validates request factors, evaluates KB-driven risk, resolves the risk band, and calculates annual/monthly premiums.
+- Updated risk scoring to return applied factors plus score, including per-occurrence multiplication for numeric simple factors.
+- Added a Middy-backed `POST /policy/quote` Lambda and CDK API Gateway route, including KB file bundling for the quote Lambda.
+- Changed `coverageDetails` to return numeric `coverage` instead of a formula string, and moved currency rounding into a shared backend utility.
+- Added a shared HTTP error response helper and updated the quote Lambda to use it.
+- Moved quote request parsing and Zod request validation from the quote service into the Lambda handler.
+- Moved the active KB path into constants and reused it from backend services, tests, infra, and KB backup scripts.
+- Mapped the shared API contract package to its source barrel in Jest so tests do not depend on ignored `dist` output.
+- Added unit coverage for contracts, risk scoring, premium band calculations, API edge cases, and infra route declaration.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/backend/src/api/http-response.test.ts`
+- `apps/backend/src/api/http-response.ts`
+- `apps/backend/src/lambda/create-quote.test.ts`
+- `apps/backend/src/lambda/create-quote.ts`
+- `apps/backend/src/services/knowledgeBase/constants.ts`
+- `apps/backend/src/services/knowledgeBase/index.ts`
+- `apps/backend/src/services/knowledgeBase/service.test.ts`
+- `apps/backend/src/services/policyQuote/index.ts`
+- `apps/backend/src/services/policyQuote/service.test.ts`
+- `apps/backend/src/services/policyQuote/service.ts`
+- `apps/backend/src/services/riskEngine/index.ts`
+- `apps/backend/src/services/riskEngine/service.test.ts`
+- `apps/backend/src/services/riskEngine/service.ts`
+- `apps/backend/src/utils/currency.test.ts`
+- `apps/backend/src/utils/currency.ts`
+- `apps/backend/tsconfig.json`
+- `jest.config.mjs`
+- `packages/api-contract/src/index.ts`
+- `packages/api-contract/src/quotes.contract.test.ts`
+- `packages/api-contract/src/quotes.contract.ts`
+- `packages/api-contract/tsconfig.json`
+- `packages/infra/app.test.ts`
+- `packages/infra/app.ts`
+- `packages/infra/tsconfig.json`
+- `scripts/check-risk-kb-backup.ts`
+- `scripts/promote-risk-kb-backup.test.ts`
+
+### What Changes were suggest by the user
+
+- Implement the approved `/policy/quote` API plan.
+- Use per-occurrence multiplication for matching numeric factors.
+- Accept the factors object directly as the request body.
+- Include calculation details in `coverageDetails` and detailed `appliedFactors`.
+- Round premium amounts to two decimals.
+- Replace `coverageDetails.formula` with `coverageDetails.coverage`.
+- Add a shared helper function for HTTP error responses.
+- Remove the `premiumFormula` constant.
+- Move `roundCurrency` into shared backend utils.
+- Move request body validation and parsing into the handler instead of the quote service.
+- Move `kb/risk-kb.json` to a constant.
+- Use the `agent-log-session` skill to update this session entry.

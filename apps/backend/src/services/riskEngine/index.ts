@@ -1,1 +1,1 @@
-export { evaluateRisk } from "./service";
+export { evaluateRisk, type RiskEvaluationResult } from "./service";

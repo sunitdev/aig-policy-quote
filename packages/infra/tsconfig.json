@@ -7,7 +7,7 @@
     "noEmit": false,
     "outDir": "dist",
     "rootDir": ".",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
-  "include": ["app.ts", "lambdas/**/*.ts", "eslint.config.js"]
+  "include": ["app.ts", "app.test.ts", "lambdas/**/*.ts", "eslint.config.js"]
 }

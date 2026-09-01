@@ -9,13 +9,48 @@ import type { Construct } from "constructs";
 
 const appDirectory = path.dirname(fileURLToPath(import.meta.url));
 const backendDirectory = path.resolve(appDirectory, "../../apps/backend");
+const riskKnowledgeBaseRelativePath = "kb/risk-kb.json";
+const riskKnowledgeBasePath = path.resolve(appDirectory, "../..", riskKnowledgeBaseRelativePath);
+const infraNodeModulesBinPath = path.join(appDirectory, "node_modules", ".bin");
+const bundlingEnvironment = {
+  PATH: `${infraNodeModulesBinPath}:${process.env.PATH ?? ""}`
+};
 
-class PolicyQuoteInfraStack extends cdk.Stack {
+export class PolicyQuoteInfraStack extends cdk.Stack {
   public constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const healthFunction = new lambdaNodejs.NodejsFunction(this, "HealthFunction", {
+      bundling: {
+        environment: bundlingEnvironment
+      },
       entry: path.join(backendDirectory, "src", "lambda", "health.ts"),
+      handler: "handler",
+      runtime: lambda.Runtime.NODEJS_22_X
+    });
+
+    const createQuoteFunction = new lambdaNodejs.NodejsFunction(this, "CreateQuoteFunction", {
+      bundling: {
+        commandHooks: {
+          afterBundling(_inputDir: string, outputDir: string): string[] {
+            return [
+              `mkdir -p ${path.join(outputDir, "kb")}`,
+              `cp ${riskKnowledgeBasePath} ${path.join(outputDir, riskKnowledgeBaseRelativePath)}`
+            ];
+          },
+          beforeBundling(): string[] {
+            return [];
+          },
+          beforeInstall(): string[] {
+            return [];
+          }
+        },
+        environment: bundlingEnvironment
+      },
+      entry: path.join(backendDirectory, "src", "lambda", "create-quote.ts"),
+      environment: {
+        RISK_KB_PATH: riskKnowledgeBaseRelativePath
+      },
       handler: "handler",
       runtime: lambda.Runtime.NODEJS_22_X
     });
@@ -30,6 +65,11 @@ class PolicyQuoteInfraStack extends cdk.Stack {
     api.root
       .addResource("health")
       .addMethod("GET", new apigateway.LambdaIntegration(healthFunction));
+
+    const policyResource = api.root.addResource("policy");
+    const quoteResource = policyResource.addResource("quote");
+
+    quoteResource.addMethod("POST", new apigateway.LambdaIntegration(createQuoteFunction));
   }
 }
 

@@ -1,4 +1,4 @@
-import { jsonResponse } from "./http-response";
+import { errorResponse, jsonResponse } from "./http-response";
 
 describe("jsonResponse", () => {
   it("returns a JSON API Gateway response with default status and content type", () => {
@@ -32,5 +32,33 @@ describe("jsonResponse", () => {
       "cache-control": "no-store"
     });
     expect(response.body).toBe(JSON.stringify({ message: "created" }));
+  });
+});
+
+describe("errorResponse", () => {
+  it("returns a JSON error response with a default 400 status", () => {
+    const response = errorResponse("Invalid request");
+
+    expect(response.statusCode).toBe(400);
+    expect(response.headers).toEqual({
+      "content-type": "application/json"
+    });
+    expect(response.body).toBe(JSON.stringify({ message: "Invalid request" }));
+  });
+
+  it("allows error response status and headers to be customized", () => {
+    const response = errorResponse("Not found", {
+      statusCode: 404,
+      headers: {
+        "cache-control": "no-store"
+      }
+    });
+
+    expect(response.statusCode).toBe(404);
+    expect(response.headers).toEqual({
+      "content-type": "application/json",
+      "cache-control": "no-store"
+    });
+    expect(response.body).toBe(JSON.stringify({ message: "Not found" }));
   });
 });

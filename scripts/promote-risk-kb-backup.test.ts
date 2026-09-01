@@ -5,13 +5,14 @@ import { fileURLToPath } from "node:url";
 
 import { afterAll, describe, expect, it } from "@jest/globals";
 
+import { defaultRiskKnowledgeBasePath } from "../apps/backend/src/services/knowledgeBase/constants";
 import type { KnowledgeBaseV1 } from "../apps/backend/src/services/knowledgeBase/types";
 import { validateRiskKnowledgeBaseBackup } from "./check-risk-kb-backup";
 import { promoteRiskKnowledgeBaseBackup } from "./promote-risk-kb-backup";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "..");
-const fixtureInput = readFileSync(resolve(repoRoot, "kb/risk-kb.json"), "utf8");
+const fixtureInput = readFileSync(resolve(repoRoot, defaultRiskKnowledgeBasePath), "utf8");
 const fixtureKnowledgeBase = JSON.parse(fixtureInput) as KnowledgeBaseV1;
 const tempRoot = mkdtempSync(resolve(tmpdir(), "risk-kb-promotion-"));
 

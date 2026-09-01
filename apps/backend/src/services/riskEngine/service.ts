@@ -1,3 +1,5 @@
+import type { AppliedFactor } from "@policy-quote/api-contract";
+
 import type {
   KnowledgeBaseConditionV1,
   KnowledgeBaseV1,
@@ -5,6 +7,11 @@ import type {
   RiskOperatorV1,
   SimpleConditionV1
 } from "../knowledgeBase/types";
+
+export interface RiskEvaluationResult {
+  appliedFactors: AppliedFactor[];
+  riskScore: number;
+}
 
 interface OperatorEvaluationInput {
   actualValue: unknown;
@@ -54,8 +61,47 @@ type RiskConditionInput = RiskFactorV1 | KnowledgeBaseConditionV1;
 export function evaluateRisk(
   factors: Record<string, unknown>,
   knowledgeBase: KnowledgeBaseV1
-): RiskFactorV1[] {
-  return knowledgeBase.factors.filter((riskFactor) => isRiskConditionTrue(factors, riskFactor));
+): RiskEvaluationResult {
+  const appliedFactors = knowledgeBase.factors
+    .filter((riskFactor) => isRiskConditionTrue(factors, riskFactor))
+    .map((riskFactor) => toAppliedFactor(factors, riskFactor));
+
+  return {
+    appliedFactors,
+    riskScore: appliedFactors.reduce(
+      (total, appliedFactor) => total + appliedFactor.contribution,
+      0
+    )
+  };
+}
+
+function toAppliedFactor(
+  factors: Record<string, unknown>,
+  riskFactor: RiskFactorV1
+): AppliedFactor {
+  const perOccurrence = riskFactor.perOccurrence ?? false;
+  const occurrenceCount = perOccurrence ? getOccurrenceCount(factors, riskFactor) : 1;
+  const contribution = riskFactor.points * occurrenceCount;
+
+  return {
+    id: riskFactor.id,
+    description: riskFactor.description,
+    points: riskFactor.points,
+    perOccurrence,
+    contribution
+  };
+}
+
+function getOccurrenceCount(factors: Record<string, unknown>, riskFactor: RiskFactorV1): number {
+  const condition = riskFactor.condition;
+
+  if (!("field" in condition)) {
+    return 1;
+  }
+
+  const occurrenceCount = factors[condition.field];
+
+  return typeof occurrenceCount === "number" ? occurrenceCount : 1;
 }
 
 function isRiskConditionTrue(

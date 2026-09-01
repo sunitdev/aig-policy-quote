@@ -3,13 +3,14 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { defaultRiskKnowledgeBasePath } from "../apps/backend/src/services/knowledgeBase/constants";
 import { parseKnowledgeBase } from "../apps/backend/src/services/knowledgeBase/service";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "..");
 
-export const defaultSourcePath = resolve(repoRoot, "kb/risk-kb.json.backup");
-export const defaultTargetPath = resolve(repoRoot, "kb/risk-kb.json");
+export const defaultSourcePath = resolve(repoRoot, `${defaultRiskKnowledgeBasePath}.backup`);
+export const defaultTargetPath = resolve(repoRoot, defaultRiskKnowledgeBasePath);
 
 interface VersionedKnowledgeBaseInput {
   kbSchemaVersion?: unknown;

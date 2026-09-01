@@ -5,12 +5,13 @@ import { fileURLToPath } from "node:url";
 
 import { ZodError } from "zod";
 
+import { defaultRiskKnowledgeBasePath } from "./constants";
 import { getKnowledgeBase, loadKnowledgeBase, parseKnowledgeBase } from "./service";
 import type { KnowledgeBaseV1 } from "./types";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(currentDir, "../../../../..");
-const riskKnowledgeBasePath = join(repoRoot, "kb/risk-kb.json");
+const riskKnowledgeBasePath = join(repoRoot, defaultRiskKnowledgeBasePath);
 
 function validKnowledgeBase(overrides: Partial<KnowledgeBaseV1> = {}): KnowledgeBaseV1 {
   return {

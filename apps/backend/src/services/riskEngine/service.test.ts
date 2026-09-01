@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { defaultRiskKnowledgeBasePath } from "../knowledgeBase/constants";
 import { parseKnowledgeBase } from "../knowledgeBase/service";
 import type { KnowledgeBaseV1, RiskFactorV1 } from "../knowledgeBase/types";
 
@@ -9,7 +10,7 @@ import { evaluateRisk } from "./service";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(currentDir, "../../../../..");
-const riskKnowledgeBasePath = join(repoRoot, "kb/risk-kb.json");
+const riskKnowledgeBasePath = join(repoRoot, defaultRiskKnowledgeBasePath);
 let riskFactorId = 0;
 
 function knowledgeBaseWithFactors(factors: RiskFactorV1[]): KnowledgeBaseV1 {
@@ -56,7 +57,7 @@ function matchingFactorIds(
   factors: Record<string, unknown>,
   knowledgeBase: KnowledgeBaseV1
 ): string[] {
-  return evaluateRisk(factors, knowledgeBase).map((riskFactor) => riskFactor.id);
+  return evaluateRisk(factors, knowledgeBase).appliedFactors.map((riskFactor) => riskFactor.id);
 }
 
 describe("RiskEngine service", () => {
@@ -64,7 +65,7 @@ describe("RiskEngine service", () => {
     it("evaluates matching factors from the real risk knowledge base", () => {
       const knowledgeBase = parseKnowledgeBase(readFileSync(riskKnowledgeBasePath, "utf8"));
 
-      const matchingFactors = evaluateRisk(
+      const riskEvaluation = evaluateRisk(
         {
           age: 24,
           previousClaims: 2,
@@ -74,17 +75,17 @@ describe("RiskEngine service", () => {
         knowledgeBase
       );
 
-      expect(matchingFactors.map((riskFactor) => riskFactor.id)).toEqual([
+      expect(riskEvaluation.appliedFactors.map((riskFactor) => riskFactor.id)).toEqual([
         "age_young_elderly",
         "previous_claims_low",
         "property_type_flat",
         "property_value_high",
         "flat_and_property_value_high"
       ]);
-      expect(matchingFactors.reduce((total, riskFactor) => total + riskFactor.points, 0)).toBe(105);
+      expect(riskEvaluation.riskScore).toBe(120);
     });
 
-    it("adds each matched factor once even when perOccurrence is configured", () => {
+    it("multiplies matched simple numeric factors when perOccurrence is configured", () => {
       const knowledgeBase = knowledgeBaseWithFactors([
         riskFactor({
           condition: {
@@ -98,7 +99,18 @@ describe("RiskEngine service", () => {
         })
       ]);
 
-      expect(evaluateRisk({ previousClaims: 2 }, knowledgeBase)).toEqual(knowledgeBase.factors);
+      expect(evaluateRisk({ previousClaims: 2 }, knowledgeBase)).toEqual({
+        appliedFactors: [
+          {
+            id: knowledgeBase.factors[0].id,
+            description: "Test factor",
+            points: 15,
+            perOccurrence: true,
+            contribution: 30
+          }
+        ],
+        riskScore: 30
+      });
     });
 
     it("uses strict equality for matching primitive values", () => {
@@ -240,7 +252,7 @@ describe("RiskEngine service", () => {
             age: 76
           },
           knowledgeBase
-        )
+        ).appliedFactors
       ).toEqual([]);
     });
 
@@ -265,12 +277,12 @@ describe("RiskEngine service", () => {
         })
       ]);
 
-      expect(evaluateRisk({ propertyType: "Flat", propertyValue: 500001 }, knowledgeBase)).toEqual(
-        knowledgeBase.factors
-      );
-      expect(evaluateRisk({ propertyType: "Flat", propertyValue: 500000 }, knowledgeBase)).toEqual(
-        []
-      );
+      expect(
+        matchingFactorIds({ propertyType: "Flat", propertyValue: 500001 }, knowledgeBase)
+      ).toEqual([knowledgeBase.factors[0].id]);
+      expect(
+        evaluateRisk({ propertyType: "Flat", propertyValue: 500000 }, knowledgeBase).appliedFactors
+      ).toEqual([]);
     });
 
     it("matches an or group when at least one condition matches", () => {
@@ -294,10 +306,10 @@ describe("RiskEngine service", () => {
         })
       ]);
 
-      expect(evaluateRisk({ propertyType: "Bungalow" }, knowledgeBase)).toEqual(
-        knowledgeBase.factors
-      );
-      expect(evaluateRisk({ propertyType: "Flat" }, knowledgeBase)).toEqual([]);
+      expect(matchingFactorIds({ propertyType: "Bungalow" }, knowledgeBase)).toEqual([
+        knowledgeBase.factors[0].id
+      ]);
+      expect(evaluateRisk({ propertyType: "Flat" }, knowledgeBase).appliedFactors).toEqual([]);
     });
 
     it("recursively evaluates nested compound conditions", () => {
@@ -340,7 +352,7 @@ describe("RiskEngine service", () => {
       ]);
 
       expect(
-        evaluateRisk(
+        matchingFactorIds(
           {
             propertyType: "House",
             propertyValue: 600000,
@@ -348,7 +360,7 @@ describe("RiskEngine service", () => {
           },
           knowledgeBase
         )
-      ).toEqual(knowledgeBase.factors);
+      ).toEqual([knowledgeBase.factors[0].id]);
       expect(
         evaluateRisk(
           {
@@ -357,7 +369,7 @@ describe("RiskEngine service", () => {
             previousClaims: 2
           },
           knowledgeBase
-        )
+        ).appliedFactors
       ).toEqual([]);
     });
 
@@ -375,7 +387,7 @@ describe("RiskEngine service", () => {
 
       const knowledgeBase = knowledgeBaseWithFactors([unsupportedOperatorFactor]);
 
-      expect(evaluateRisk({ age: 24 }, knowledgeBase)).toEqual([]);
+      expect(evaluateRisk({ age: 24 }, knowledgeBase).appliedFactors).toEqual([]);
     });
   });
 });

@@ -24,5 +24,8 @@ export default {
       }
     ]
   },
+  moduleNameMapper: {
+    "^@policy-quote/api-contract$": "<rootDir>/packages/api-contract/src/index.ts"
+  },
   clearMocks: true
 };
