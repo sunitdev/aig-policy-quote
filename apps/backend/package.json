@@ -1,0 +1,27 @@
+{
+  "name": "@policy-quote/backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --max-warnings=0",
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@middy/core": "^7.9.2",
+    "@middy/http-content-encoding": "^7.9.2",
+    "@middy/http-content-negotiation": "^7.9.2",
+    "@middy/http-error-handler": "^7.9.2",
+    "@policy-quote/api-contract": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.159",
+    "@types/node": "^26.4.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -8,13 +8,14 @@ import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import type { Construct } from "constructs";
 
 const appDirectory = path.dirname(fileURLToPath(import.meta.url));
+const backendDirectory = path.resolve(appDirectory, "../../apps/backend");
 
 class PolicyQuoteInfraStack extends cdk.Stack {
   public constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const helloFunction = new lambdaNodejs.NodejsFunction(this, "HelloFunction", {
-      entry: path.join(appDirectory, "lambdas", "hello.ts"),
+    const healthFunction = new lambdaNodejs.NodejsFunction(this, "HealthFunction", {
+      entry: path.join(backendDirectory, "src", "lambda", "health.ts"),
       handler: "handler",
       runtime: lambda.Runtime.NODEJS_22_X
     });
@@ -26,7 +27,9 @@ class PolicyQuoteInfraStack extends cdk.Stack {
       restApiName: "policy-quote-api"
     });
 
-    api.root.addResource("hello").addMethod("GET", new apigateway.LambdaIntegration(helloFunction));
+    api.root
+      .addResource("health")
+      .addMethod("GET", new apigateway.LambdaIntegration(healthFunction));
   }
 }
 

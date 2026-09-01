@@ -235,6 +235,47 @@ importers:
         specifier: ^8.68.0
         version: 8.68.0(eslint@10.9.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
 
+  apps/backend:
+    dependencies:
+      '@middy/core':
+        specifier: ^7.9.2
+        version: 7.9.2
+      '@middy/http-content-encoding':
+        specifier: ^7.9.2
+        version: 7.9.2
+      '@middy/http-content-negotiation':
+        specifier: ^7.9.2
+        version: 7.9.2
+      '@middy/http-error-handler':
+        specifier: ^7.9.2
+        version: 7.9.2
+      '@policy-quote/api-contract':
+        specifier: workspace:*
+        version: link:../../packages/api-contract
+    devDependencies:
+      '@types/aws-lambda':
+        specifier: ^8.10.159
+        version: 8.10.162
+      '@types/node':
+        specifier: ^26.4.0
+        version: 26.4.0
+      tsx:
+        specifier: ^4.0.0
+        version: 4.23.13
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+
+  packages/api-contract:
+    dependencies:
+      zod:
+        specifier: ^4.1.13
+        version: 4.5.4
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+
   packages/infra:
     dependencies:
       aws-cdk-lib:
@@ -989,6 +1030,31 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
+  '@middy/core@7.9.2':
+    resolution: {integrity: sha512-3VJ8m6KjGyMMHjgbmAxHai8f97VOU71XTyjFI+lnLqC0Dng+5zxXfuagFXUQTHRL2xj16p+mKmWtbTnxkwF5zw==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      '@aws/durable-execution-sdk-js': ^2.0.0
+    peerDependenciesMeta:
+      '@aws/durable-execution-sdk-js':
+        optional: true
+
+  '@middy/http-content-encoding@7.9.2':
+    resolution: {integrity: sha512-FYj/MmC5SZ1Zy1hvtZf4EOPof4QI8/tEYBmRjSj82SRGA5QnPWgjdoFV6+QiV+pJxmjEf61EXnfenifcGvsw6w==}
+    engines: {node: '>=22'}
+
+  '@middy/http-content-negotiation@7.9.2':
+    resolution: {integrity: sha512-2TiSrEjbZ8BvKDfALliMO+JsbW63BELdfcOxPzgwTNXdfMKx0gGZ4Ro5mPb2JrJhzM/D6uwkJj4ZqIjaD7OKjg==}
+    engines: {node: '>=22'}
+
+  '@middy/http-error-handler@7.9.2':
+    resolution: {integrity: sha512-f3BFDG34COt6bqt0CTW0T2ZEORjCObNhpbJWU3sTRZ8DQwGynz/kBep6xO2yswLu3+8nbqqKSEdxUKCjsj874g==}
+    engines: {node: '>=22'}
+
+  '@middy/util@7.9.2':
+    resolution: {integrity: sha512-H2NDN08V2LKk04mnEOH0PMuSTckKpbYXamL2BsGP/QigQx0uXKaVISVK9/DLLEp3VxJofBTTBXK1QT0lypm8gg==}
+    engines: {node: '>=22'}
+
   '@napi-rs/wasm-runtime@1.2.3':
     resolution: {integrity: sha512-UMduMbqO5s5zF2NkNacMT/yK5Y5QiKvWr2+50bzIIxFDwVJ2h49b+oyjaCGPhJxd2/gC2x39EHv/gHVuu36x2Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
@@ -1097,6 +1163,9 @@ packages:
 
   '@tybys/wasm-util@0.10.3':
     resolution: {integrity: sha512-F3fo1MYrRJYL3zER0OUOmkutjr1Vp23m7OsSgp7nq4SP6OqX6C/56XFIPAl5bt3zaBRjmW7SGz3u/6LwFpYcOg==}
+
+  '@types/aws-lambda@8.10.162':
+    resolution: {integrity: sha512-Fn658grtLOci1oxi1391vvDWJRKNGWRSqfxRkmN/Iy3c0tQH1USMKEXcPYHLvope+ZgTFocx9FRQJx1muBL6qw==}
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -1530,6 +1599,10 @@ packages:
 
   constructs@10.8.1:
     resolution: {integrity: sha512-98yGXYyhePqPYh3cYu8nzBERmAhC0DONe3UD03okK0nehZ7hYP4wgZuf02a04+uOWxnTJ5Rpp5m0GRNpwyLGGA==}
+
+  content-type@2.1.0:
+    resolution: {integrity: sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag==}
+    engines: {node: '>=18'}
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
@@ -2095,6 +2168,10 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
+  negotiator@1.1.0:
+    resolution: {integrity: sha512-NMPBRMJgiQHjbd8phG3Vebdx4kZ1H121rbl5IkMqeOsahptB9BKo/d7oJ3zTXqTgagn2bWlNSXkh0QUGM31RYg==}
+    engines: {node: '>=18'}
+
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
 
@@ -2461,6 +2538,9 @@ packages:
   yoctocolors@2.2.0:
     resolution: {integrity: sha512-xYqdZFUK/VYazNl/oCDYN+3WloWQwMfZxBoiNt6qNyk+xfOdi598muWE42rNZFp1kNOiqW936q5RhUdnpqElSg==}
     engines: {node: '>=18'}
+
+  zod@4.5.4:
+    resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
 
 snapshots:
 
@@ -3187,6 +3267,25 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
+  '@middy/core@7.9.2':
+    dependencies:
+      '@middy/util': 7.9.2
+
+  '@middy/http-content-encoding@7.9.2':
+    dependencies:
+      '@middy/util': 7.9.2
+
+  '@middy/http-content-negotiation@7.9.2':
+    dependencies:
+      '@middy/util': 7.9.2
+      negotiator: 1.1.0
+
+  '@middy/http-error-handler@7.9.2':
+    dependencies:
+      '@middy/util': 7.9.2
+
+  '@middy/util@7.9.2': {}
+
   '@napi-rs/wasm-runtime@1.2.3(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
       '@emnapi/core': 1.10.0
@@ -3269,6 +3368,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@types/aws-lambda@8.10.162': {}
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -3684,6 +3785,8 @@ snapshots:
   color-name@1.1.4: {}
 
   constructs@10.8.1: {}
+
+  content-type@2.1.0: {}
 
   convert-source-map@2.0.0: {}
 
@@ -4436,6 +4539,10 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
+  negotiator@1.1.0:
+    dependencies:
+      content-type: 2.1.0
+
   node-addon-api@7.1.1: {}
 
   node-int64@0.4.0: {}
@@ -4783,3 +4890,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yoctocolors@2.2.0: {}
+
+  zod@4.5.4: {}
