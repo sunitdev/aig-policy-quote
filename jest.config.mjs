@@ -19,7 +19,7 @@ export default {
     "^.+\\.ts$": [
       "ts-jest",
       {
-        tsconfig: "<rootDir>/tsconfig.base.json",
+        tsconfig: "<rootDir>/tsconfig.jest.json",
         useESM: true
       }
     ]

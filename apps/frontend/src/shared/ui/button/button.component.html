@@ -9,6 +9,9 @@
   [attr.aria-busy]="loading ? 'true' : null"
 >
   <span class="ui-button__content">
+    @if (loading) {
+      <span class="ui-button__spinner" aria-hidden="true"></span>
+    }
     <ng-content />
   </span>
 </button>

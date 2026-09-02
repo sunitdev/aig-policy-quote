@@ -11,7 +11,7 @@
   <section class="policy-quote-state" aria-live="polite">
     <p>Loading quote fields...</p>
   </section>
-  } @else if (errorMessage()) {
+  } @else if (uiInputs().length === 0 && errorMessage()) {
   <section class="policy-quote-state policy-quote-state--error" role="alert">
     <p>{{ errorMessage() }}</p>
   </section>
@@ -20,12 +20,19 @@
     <p>No quote fields are available.</p>
   </section>
   } @else {
-  <form class="policy-quote-form" [formGroup]="form">
+  <form class="policy-quote-form" [formGroup]="form" (ngSubmit)="submitQuote()">
+    @if (errorMessage()) {
+    <section class="policy-quote-state policy-quote-state--error" role="alert">
+      <p>{{ errorMessage() }}</p>
+    </section>
+    }
+
     <div class="policy-quote-form__grid">
       @for (input of uiInputs(); track input.id) { @switch (input.type) { @case ("text") {
       <app-text-input
         [label]="input.label"
         [helpText]="helpTextFor(input)"
+        [errorText]="errorTextFor(input)"
         [required]="isRequired(input)"
         [name]="input.id"
         [formControl]="controlFor(input.id)"
@@ -34,6 +41,7 @@
       <app-number-input
         [label]="input.label"
         [helpText]="helpTextFor(input)"
+        [errorText]="errorTextFor(input)"
         [required]="isRequired(input)"
         [name]="input.id"
         [min]="minFor(input)"
@@ -44,6 +52,7 @@
       <app-select-input
         [label]="input.label"
         [helpText]="helpTextFor(input)"
+        [errorText]="errorTextFor(input)"
         [required]="isRequired(input)"
         [name]="input.id"
         placeholder="Choose an option"
@@ -54,8 +63,78 @@
     </div>
 
     <div class="policy-quote-form__actions">
-      <app-button type="button" disabled>Prepare quote</app-button>
+      <app-button type="submit" [disabled]="isSubmitDisabled()" [loading]="isQuoteSubmitting()">
+        Prepare quote
+      </app-button>
     </div>
   </form>
-  }
+
+  @if (quoteResult(); as result) {
+  <section class="policy-quote-result" aria-labelledby="policy-quote-result-title">
+    <div class="policy-quote-result__header">
+      <div>
+        <p class="policy-quote-result__eyebrow">Quote Result</p>
+        <h2 id="policy-quote-result-title">Prepared premium</h2>
+      </div>
+      <app-risk-band-badge [riskBand]="result.riskBand" />
+    </div>
+
+    <dl class="policy-quote-result__premiums">
+      <div class="policy-quote-result__premium">
+        <dt>Monthly premium</dt>
+        <dd>{{ result.monthlyPremium | currency: "GBP" : "symbol" : "1.2-2" }}</dd>
+      </div>
+      <div class="policy-quote-result__premium">
+        <dt>Annual premium</dt>
+        <dd>{{ result.annualPremium | currency: "GBP" : "symbol" : "1.2-2" }}</dd>
+      </div>
+    </dl>
+
+    <div class="policy-quote-result__summary">
+      <div>
+        <span class="policy-quote-result__label">Risk score</span>
+        <strong>{{ result.riskScore }}</strong>
+      </div>
+      <p>{{ result.riskSummary }}</p>
+    </div>
+
+    <section class="policy-quote-result__section" aria-labelledby="coverage-details-title">
+      <h3 id="coverage-details-title">Coverage details</h3>
+      <dl class="policy-quote-result__details">
+        <div>
+          <dt>Base premium</dt>
+          <dd>{{ result.coverageDetails.basePremium | currency: "GBP" : "symbol" : "1.2-2" }}</dd>
+        </div>
+        <div>
+          <dt>Risk multiplier</dt>
+          <dd>{{ result.coverageDetails.riskMultiplier }}</dd>
+        </div>
+        <div>
+          <dt>Coverage load factor</dt>
+          <dd>{{ result.coverageDetails.coverageLoadFactor }}</dd>
+        </div>
+        <div>
+          <dt>Coverage</dt>
+          <dd>{{ result.coverageDetails.coverage | currency: "GBP" : "symbol" : "1.2-2" }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="policy-quote-result__section" aria-labelledby="applied-factors-title">
+      <h3 id="applied-factors-title">Applied factors</h3>
+      @if (result.appliedFactors.length > 0) {
+      <ul class="policy-quote-result__factors">
+        @for (factor of result.appliedFactors; track factor.id) {
+        <li>
+          <span>{{ factor.description }}</span>
+          <strong>{{ factor.contribution }}</strong>
+        </li>
+        }
+      </ul>
+      } @else {
+      <p class="policy-quote-result__empty">No risk factors were applied.</p>
+      }
+    </section>
+  </section>
+  } }
 </main>

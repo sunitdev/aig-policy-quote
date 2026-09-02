@@ -1049,3 +1049,86 @@ Dont assume anything ask me question if needed.&#x20;
 - Asked to implement the approved Policy Quote Form Rendering plan.
 - Discovered a browser CORS error when `http://localhost:4200` called `http://127.0.0.1:3000/policy/quote/ui-inputs` and directed the fix to allow the frontend origin through Lambda/API Gateway CORS headers and preflight configuration.
 - Discovered `net::ERR_CONTENT_DECODING_FAILED 200 (OK)` for the policy quote UI metadata request and directed the fix to prevent compressed/transformed JSON responses from being served in a browser-incompatible shape.
+
+## Session: Policy Quote Submission And Results
+
+- Started: 2026-09-02 00:56:37 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-02 00:56:37 +0100
+
+```text
+Implement quote submission and result rendering for the Policy Quote frontend page
+
+
+
+Changes:
+
+- In `apps/frontend/src/features/policy-quote/policy-quote.page.ts`, add submit handling for the existing metadata driven Reactive Form
+- On submit:
+  - mark all controls as touched if the form is invalid
+  - clear any previous error
+  - call `createQuote()` from `policy-quote.service.ts`
+  - store the response in a `quoteResult` Signal
+- Use Signals for
+  - quote submission loading state
+  - quote result
+  - error message
+- Render the returned quote result in `policy-quote.page.html`:
+  - monthly premium
+  - annual premium
+  - risk band using `RiskBandBadgeComponent`
+  - risk score
+  - risk summary
+  - coverage details
+  - applied factors from the API response
+- Do not calculate risk score, risk band, premiums, or applied factors in the frontend.
+- Do not hardcode policy quote field names; submit the form value as the quote request object.
+- Keep styling in `policy-quote.page.css` and use existing design tokens only.
+
+Context
+
+- [frontend.md](docs/frontend.md)
+- [backend.md](docs/backend.md)&#x20;
+- [kb.md](docs/kb.md)&#x20;
+
+
+
+Verification
+
+- `make dev-serverless` starts API and frontend.
+- Submitting valid form values displays a quote result.
+- Invalid form values do not submit and show validation feedback.
+- Update `AGENT_LOG.md`.
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Added metadata-driven quote submission handling to the Policy Quote page with Signals for submission loading, quote result, and error state.
+- Rendered backend-provided quote results, including premiums, risk band badge, risk score, summary, coverage details, and applied factors.
+- Added focused Jest coverage for invalid submission, generic request payload submission, successful quote storage, and failed submission state.
+- Added a Jest-specific TypeScript config so Angular component tests can import standalone components under Jest JIT.
+- Disabled the quote submit button when the form is invalid or submitting, and added a loading spinner to the shared button component.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.css`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.html`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.test.ts`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.ts`
+- `apps/frontend/src/shared/ui/button/button.component.css`
+- `apps/frontend/src/shared/ui/button/button.component.html`
+- `jest.config.mjs`
+- `tsconfig.jest.json`
+
+### What Changes were suggest by the user
+
+- Asked to implement the approved Policy Quote Submission And Results plan.
+- Asked to implement the plan exactly, including updating `AGENT_LOG.md`.
+- Asked to disable the quote submit button while the form is invalid and show a spinner while waiting for the quote response.
