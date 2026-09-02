@@ -1299,3 +1299,73 @@ Dont assume anything ask me question if needed.
 
 - Asked to implement the approved Backend Validation for `POST /policy/quote` plan.
 - Reported a Vite import-analysis error resolving `zod` from the frontend dev bundle and asked to not import zod at runtime.
+
+## Session: README And Solution Docs Update
+
+- Started: 2026-09-02 02:19:26 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-02 02:19:26 +0100
+
+```text
+Update `README.md` and `SOLUTION.md` based on the current codebase and docs.
+
+
+
+Change:
+
+- Read the task PDF, `AGENT_LOG.md`, existing docs, and source code before writing.
+- Update `README.md` with:
+  - project overview
+  - repo structure
+  - prerequisites
+  - install command
+  - how to run the frontend and backend locally
+  - how to run the serverless API with SAM
+  - how to run the Fastify/container-style backend
+  - how to run tests, lint, typecheck, and build
+  - KB file location and how quote rules are changed
+- Update `SOLUTION.md` with max 300 words covering:
+  - architecture decisions
+  - KB schema/design choices
+  - agent skill/instruction rationale
+- Keep both documents accurate to the current implementation.
+- Add note in Solution.md with more time I would add versioned KB releases and include the active KB version in quote responses.
+- Do not describe features that are not implemented.
+
+Context:
+
+- [AGENT\_LOG.md](AGENT_LOG.md)
+- [architecture.md](docs/architecture.md)
+- [backend.md](docs/backend.md)
+- [frontend.md](docs/frontend.md)
+- [infra.md](docs/infra.md)
+- [kb.md](docs/kb.md)
+
+Verification:
+
+- Confirm `SOLUTION.md` is 300 words or fewer.
+- Run format check.
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Expanded `README.md` from a placeholder into current, source-backed setup and operating documentation for the Angular frontend, Lambda/SAM backend, Fastify/container backend, verification commands, and KB rule workflow.
+- Added `SOLUTION.md` with a 300-word-limited summary of architecture decisions, KB schema choices, and agent instruction rationale.
+- Verified `SOLUTION.md` is 230 words and the repository format check passes.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `README.md`
+- `SOLUTION.md`
+
+### What Changes were suggest by the user
+
+- Asked to implement the approved README and solution docs update plan.
+- Asked to include the targeted backend Prettier command from the approved plan.
