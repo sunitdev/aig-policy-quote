@@ -24,4 +24,4 @@ boundaries before changing code. `AGENT_LOG.md` records significant prompts and
 decisions for review. The `risk-kb-factor` skill adds a backup-first KB workflow: edit
 `kb/risk-kb.json.backup`, validate it with the backend parser, then promote only a valid
 candidate. With more time, I would add versioned KB release files and return active KB
-version metadata from quote responses.
+version metadata from quote responses. Also would like to add e2e test using playwright or similar tool.
