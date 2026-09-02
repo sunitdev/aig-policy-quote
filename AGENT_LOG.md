@@ -25,7 +25,7 @@ Context:
 - [architecture.md](docs/architecture.md)&#x20;
 
 Verification:
-- The hello lambda runs locally and we are the response from lambda.
+- The hello lambda runs locally and we can curl the response from lambda.
 
 Dont assume anything ask me question if needed.
 ```
