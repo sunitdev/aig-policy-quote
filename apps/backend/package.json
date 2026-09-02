@@ -6,24 +6,32 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "pnpm run build:ts && pnpm run build:server",
+    "build:server": "esbuild src/server/server.ts --bundle --platform=node --format=esm --target=node22 --external:fastify --external:@fastify/cors --outfile=dist/server/server.js",
+    "build:ts": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/server/server.ts",
     "lint": "eslint . --max-warnings=0",
+    "start": "node dist/server/server.js",
     "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --config ../../jest.config.mjs apps/backend/src",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@fastify/cors": "^11.3.0",
     "@middy/core": "^7.9.2",
     "@middy/http-content-encoding": "^7.9.2",
     "@middy/http-content-negotiation": "^7.9.2",
     "@middy/http-error-handler": "^7.9.2",
     "@policy-quote/api-contract": "workspace:*",
+    "fastify": "^5.12.1",
     "zod": "^4.5.4"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.159",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.4.0",
+    "esbuild": "^0.27.7",
     "ts-jest": "^29.4.12",
+    "tsx": "^4.23.13",
     "typescript": "^5.0.0"
   }
 }

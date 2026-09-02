@@ -2,11 +2,10 @@ import middy from "@middy/core";
 import httpContentEncoding from "@middy/http-content-encoding";
 import httpContentNegotiation from "@middy/http-content-negotiation";
 import httpErrorHandler from "@middy/http-error-handler";
-import { quoteRequestSchema } from "@policy-quote/api-contract";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from "aws-lambda";
 
 import { errorResponse, jsonResponse } from "../api/http-response";
-import { createQuote } from "../services/policyQuote";
+import { createQuoteEndpoint } from "../endpoints/create-quote.endpoint";
 
 function lambdaHandler(event: APIGatewayProxyEvent, _context: Context): APIGatewayProxyResult {
   const requestBody = parseJsonBody(event);
@@ -15,13 +14,9 @@ function lambdaHandler(event: APIGatewayProxyEvent, _context: Context): APIGatew
     return errorResponse(requestBody.message);
   }
 
-  const quoteRequest = quoteRequestSchema.safeParse(requestBody.value);
+  const quoteResponse = createQuoteEndpoint(requestBody.value);
 
-  if (!quoteRequest.success) {
-    return errorResponse("Request body must be an object of quote factors.");
-  }
-
-  return jsonResponse(createQuote(quoteRequest.data));
+  return jsonResponse(quoteResponse.body, { statusCode: quoteResponse.statusCode });
 }
 
 function parseJsonBody(

@@ -1132,3 +1132,96 @@ Dont assume anything ask me question if needed.
 - Asked to implement the approved Policy Quote Submission And Results plan.
 - Asked to implement the plan exactly, including updating `AGENT_LOG.md`.
 - Asked to disable the quote submit button while the form is invalid and show a spinner while waiting for the quote response.
+
+## Session: Fastify Container Backend Runtime
+
+- Started: 2026-09-02 01:14:02 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-02 01:14:02 +0100
+
+```text
+Implement a Docker/Fargate-style backend runtime using Fastify and test it end to end locally
+
+
+
+Changes:
+
+- Add a Fastify server runtime in `apps/backend/src/server/`.
+- The Fastify server should expose the same public backend routes as the Lambda API:
+  - `GET /health`
+  - `GET /policy/quote/ui-inputs`
+  - `POST /policy/quote`
+- Reuse the existing backend services and API contracts.
+- Do not duplicate risk scoring, premium calculation, KB loading, or quote logic.
+- Keep Lambda handlers working as they are.
+- Add a production-ready multi-stage `apps/backend/Dockerfile`.
+- The Docker image should:
+  - build the backend TypeScript code
+  - include the local `kb/risk-kb.json`
+  - start the Fastify server
+  - listen on port `3000`
+- Add package scripts for running the Fastify server locally.
+- Add Makefile targets:
+  - `make backend-container-build`
+  - `make backend-container-up`
+- Add unit or integration tests for Fastify routes to confirm route parity with Lambda behavior.
+
+Context:
+
+- [backend.md](docs/backend.md)
+- [infra.md](docs/infra.md)
+- [architecture.md](docs/architecture.md)
+- [kb.md](docs/kb.md)
+
+Verification:
+
+- Docker image builds successfully.
+- Running the container exposes the API on `localhost:3000`
+- `curl localhost:3000/health` returns a valid health response.
+- `curl localhost:3000/policy/quote/ui-inputs` returns KB UI inputs
+- A `POST localhost:3000/policy/quote` request returns monthly premium, annual premium, risk band, risk score, risk summary, coverage details, and applied factors
+- Update `AGENT_LOG.md` with summary, changed files, and key decisions.
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Added shared backend endpoint functions for health, quote UI inputs, and quote creation so Lambda and Fastify adapters delegate to the same service-backed behavior.
+- Added a Fastify server runtime with the Lambda-equivalent public routes, matching quote validation error messages and JSON/CORS/cache headers for the local container path.
+- Added a multi-stage backend Dockerfile, root Docker ignore file, backend dev/start scripts, Fastify/esbuild dependencies, and Makefile targets for container build/run workflows.
+- Switched the Fastify runtime to an esbuild-bundled server entrypoint so TypeScript source imports can stay extensionless while Docker still runs with plain Node.
+- Made relative KB path resolution work from repo root, package-local, Lambda, and container working directories.
+- Added `make dev-fastify` and `make dev-fastify-api` for running the frontend against the Fastify backend API during local development.
+- Added Fastify route integration tests proving parity with Lambda quote behavior and validating malformed, missing, and non-object request bodies.
+- Verified backend build, typecheck, lint, tests, Docker image build, compiled local server curls, and container curls against `localhost:3000`.
+
+### What Changed
+
+- `.dockerignore`
+- `AGENT_LOG.md`
+- `Makefile`
+- `apps/backend/Dockerfile`
+- `apps/backend/package.json`
+- `apps/backend/src/endpoints/create-quote.endpoint.ts`
+- `apps/backend/src/endpoints/health.endpoint.ts`
+- `apps/backend/src/endpoints/quote-ui-inputs.endpoint.ts`
+- `apps/backend/src/lambda/create-quote.ts`
+- `apps/backend/src/lambda/health.ts`
+- `apps/backend/src/lambda/quote-ui-inputs.ts`
+- `apps/backend/src/server/routes.test.ts`
+- `apps/backend/src/server/routes.ts`
+- `apps/backend/src/server/server.ts`
+- `apps/backend/src/services/knowledgeBase/service.ts`
+- `pnpm-lock.yaml`
+
+### What Changes were suggest by the user
+
+- Asked to implement the approved Fastify Container Backend Runtime plan.
+- Asked to keep Lambda handlers working while adding the Docker/Fargate-style Fastify runtime.
+- Asked to replace Node ESM `.js` source import suffixes with a bundled Fastify server runtime approach.
+- Asked to add a `dev-fastify` Makefile command similar to `dev-serverless` but using the Fastify backend API.

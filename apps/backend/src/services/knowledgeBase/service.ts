@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, isAbsolute, resolve } from "node:path";
 
 import { uiInputsResponseSchema, type UIInputsResponse } from "@policy-quote/api-contract";
 
@@ -18,15 +18,17 @@ export function parseKnowledgeBase(input: string): KnowledgeBaseV1 {
 }
 
 export function loadKnowledgeBase(path: string): KnowledgeBaseV1 {
-  if (!existsSync(path)) {
-    throw new Error(`Knowledge base file not found: ${path}`);
+  const knowledgeBasePath = resolveKnowledgeBasePath(path);
+
+  if (!knowledgeBasePath) {
+    throw new Error(`Knowledge base file not found: ${resolve(path)}`);
   }
 
-  return parseKnowledgeBase(readFileSync(path, "utf8"));
+  return parseKnowledgeBase(readFileSync(knowledgeBasePath, "utf8"));
 }
 
 export function getKnowledgeBase(path: string): KnowledgeBaseV1 {
-  const cacheKey = resolve(path);
+  const cacheKey = resolveKnowledgeBasePath(path) ?? resolve(path);
   const cachedKnowledgeBase = knowledgeBaseCache.get(cacheKey);
 
   if (cachedKnowledgeBase) {
@@ -49,6 +51,34 @@ export function getUIInputs(options: GetUIInputsOptions = {}): UIInputsResponse 
 
 function getDefaultKnowledgeBasePath(): string {
   return process.env.RISK_KB_PATH ?? defaultRiskKnowledgeBasePath;
+}
+
+function resolveKnowledgeBasePath(path: string): string | undefined {
+  const directPath = resolve(path);
+
+  if (existsSync(directPath)) {
+    return directPath;
+  }
+
+  if (isAbsolute(path)) {
+    return undefined;
+  }
+
+  let searchDirectory = process.cwd();
+  let parentDirectory = dirname(searchDirectory);
+
+  while (searchDirectory !== parentDirectory) {
+    const candidatePath = resolve(searchDirectory, path);
+
+    if (existsSync(candidatePath)) {
+      return candidatePath;
+    }
+
+    searchDirectory = parentDirectory;
+    parentDirectory = dirname(searchDirectory);
+  }
+
+  return undefined;
 }
 
 export type { GetUIInputsOptions };

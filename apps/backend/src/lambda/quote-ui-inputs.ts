@@ -5,10 +5,10 @@ import httpErrorHandler from "@middy/http-error-handler";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from "aws-lambda";
 
 import { jsonResponse } from "../api/http-response";
-import { getUIInputs } from "../services/knowledgeBase";
+import { getQuoteUIInputsEndpoint } from "../endpoints/quote-ui-inputs.endpoint";
 
 function lambdaHandler(_event: APIGatewayProxyEvent, _context: Context): APIGatewayProxyResult {
-  return jsonResponse(getUIInputs());
+  return jsonResponse(getQuoteUIInputsEndpoint());
 }
 
 export const handler = middy<APIGatewayProxyEvent, APIGatewayProxyResult>()
