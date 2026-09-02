@@ -18,6 +18,14 @@ async function invokeCreateQuoteLambda(body: string): Promise<APIGatewayProxyRes
   return createQuoteHandler(eventWithBody(body), {} as Context);
 }
 
+const validHighRiskQuoteRequest = {
+  age: 52,
+  customerName: "Ada Lovelace",
+  previousClaims: 3,
+  propertyType: "House",
+  propertyValue: 250000
+};
+
 describe("Fastify backend routes", () => {
   const server = buildServer();
 
@@ -54,9 +62,7 @@ describe("Fastify backend routes", () => {
   });
 
   it("returns the same quote response body as the Lambda route for valid input", async () => {
-    const requestBody = JSON.stringify({
-      previousClaims: 3
-    });
+    const requestBody = JSON.stringify(validHighRiskQuoteRequest);
     const [fastifyResponse, lambdaResponse] = await Promise.all([
       server.inject({
         headers: {

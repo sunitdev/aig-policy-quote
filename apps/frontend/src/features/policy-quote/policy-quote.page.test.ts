@@ -1,5 +1,6 @@
 import "@angular/compiler";
 
+import { HttpErrorResponse } from "@angular/common/http";
 import { Injector, runInInjectionContext } from "@angular/core";
 import type { WritableSignal } from "@angular/core";
 import { describe, expect, it, jest } from "@jest/globals";
@@ -207,6 +208,36 @@ describe("PolicyQuotePageComponent", () => {
     component.submitQuote();
 
     expect(component.errorMessage()).toBe("Unable to prepare the quote. Please try again.");
+    expect(component.isQuoteSubmitting()).toBe(false);
+    expect(component.quoteResult()).toBeNull();
+  });
+
+  it("maps backend validation errors onto generated form controls", () => {
+    const { component } = setupComponent({
+      createQuoteResult: throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 400,
+            error: {
+              message: "Quote request contains validation errors.",
+              errors: {
+                assetValue: ["Asset Value must be at least 100000."]
+              }
+            }
+          })
+      )
+    });
+
+    component.form.setValue({
+      assetValue: 250000,
+      constructionStyle: "Terraced",
+      customerAlias: "Quote A"
+    });
+    component.submitQuote();
+
+    expect(component.errorMessage()).toBe("Quote request contains validation errors.");
+    expect(component.form.controls.assetValue.hasError("backend")).toBe(true);
+    expect(component.errorTextFor(uiInputs[1])).toBe("Asset Value must be at least 100000.");
     expect(component.isQuoteSubmitting()).toBe(false);
     expect(component.quoteResult()).toBeNull();
   });

@@ -15,13 +15,17 @@ async function invokeCreateQuote(body: string): Promise<APIGatewayProxyResult> {
   return handler(eventWithBody(body), {} as Context);
 }
 
+const validHighRiskQuoteRequest = {
+  age: 52,
+  customerName: "Ada Lovelace",
+  previousClaims: 3,
+  propertyType: "House",
+  propertyValue: 250000
+};
+
 describe("create quote handler", () => {
   it("returns a quote response for a valid direct factor object", async () => {
-    const response = await invokeCreateQuote(
-      JSON.stringify({
-        previousClaims: 3
-      })
-    );
+    const response = await invokeCreateQuote(JSON.stringify(validHighRiskQuoteRequest));
 
     expect(response.statusCode).toBe(200);
     expect(response.headers).toEqual({
@@ -54,16 +58,16 @@ describe("create quote handler", () => {
     });
   });
 
-  it("accepts an empty factor object and returns a standard quote", async () => {
+  it("returns 400 for an empty factor object that is missing required fields", async () => {
     const response = await invokeCreateQuote("{}");
 
-    expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.body)).toMatchObject({
-      monthlyPremium: 30,
-      annualPremium: 360,
-      riskBand: "STANDARD",
-      riskScore: 0,
-      appliedFactors: []
+    expect(response.statusCode).toBe(400);
+    expect(JSON.parse(response.body)).toEqual({
+      message: "Quote request contains validation errors.",
+      errors: {
+        age: ["Age is required."],
+        customerName: ["Full Name is required."]
+      }
     });
   });
 

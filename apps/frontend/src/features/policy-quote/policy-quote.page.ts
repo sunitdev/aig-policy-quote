@@ -1,10 +1,12 @@
 import { CurrencyPipe } from "@angular/common";
+import { HttpErrorResponse } from "@angular/common/http";
 import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import type { OnInit } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import type {
   QuoteRequest,
   QuoteResponse,
+  QuoteValidationErrorResponse,
   UIInput,
   UIInputsResponse
 } from "@policy-quote/api-contract";
@@ -89,6 +91,11 @@ export class PolicyQuotePageComponent implements OnInit {
 
   protected errorTextFor(input: UIInput): string {
     const control = this.controlFor(input.id);
+    const backendErrors = control.getError("backend") as string[] | undefined;
+
+    if (backendErrors && backendErrors.length > 0) {
+      return backendErrors[0];
+    }
 
     if (!control.touched || control.valid) {
       return "";
@@ -123,6 +130,7 @@ export class PolicyQuotePageComponent implements OnInit {
 
   protected submitQuote(): void {
     this.errorMessage.set("");
+    this.clearBackendValidationErrors();
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -143,8 +151,8 @@ export class PolicyQuotePageComponent implements OnInit {
         next: (quoteResult) => {
           this.quoteResult.set(quoteResult);
         },
-        error: () => {
-          this.errorMessage.set("Unable to prepare the quote. Please try again.");
+        error: (error: unknown) => {
+          this.handleQuoteSubmissionError(error);
         }
       });
   }
@@ -173,4 +181,73 @@ export class PolicyQuotePageComponent implements OnInit {
         }
       });
   }
+
+  private handleQuoteSubmissionError(error: unknown): void {
+    const validationError = this.parseQuoteValidationError(error);
+
+    if (validationError) {
+      this.errorMessage.set(validationError.message);
+      this.applyBackendValidationErrors(validationError.errors);
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.errorMessage.set("Unable to prepare the quote. Please try again.");
+  }
+
+  private parseQuoteValidationError(error: unknown): QuoteValidationErrorResponse | null {
+    if (!(error instanceof HttpErrorResponse) || !isQuoteValidationErrorResponse(error.error)) {
+      return null;
+    }
+
+    return error.error;
+  }
+
+  private applyBackendValidationErrors(errors: Record<string, string[]>): void {
+    for (const [fieldId, messages] of Object.entries(errors)) {
+      const control = this.form.get(fieldId);
+
+      if (!control) {
+        continue;
+      }
+
+      control.setErrors({
+        ...(control.errors ?? {}),
+        backend: messages
+      });
+    }
+  }
+
+  private clearBackendValidationErrors(): void {
+    for (const control of Object.values(this.form.controls)) {
+      const errors = control.errors;
+
+      if (!errors?.backend) {
+        continue;
+      }
+
+      const nextErrors = {
+        ...errors
+      };
+      delete nextErrors.backend;
+
+      control.setErrors(Object.keys(nextErrors).length > 0 ? nextErrors : null);
+    }
+  }
+}
+
+function isQuoteValidationErrorResponse(value: unknown): value is QuoteValidationErrorResponse {
+  if (!isRecord(value) || typeof value.message !== "string" || !isRecord(value.errors)) {
+    return false;
+  }
+
+  return Object.values(value.errors).every(isStringArray);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string" && item.length > 0);
 }

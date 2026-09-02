@@ -26,6 +26,11 @@ export const uiInputsResponseSchema = z.array(uiInputSchema);
 
 export const quoteRequestSchema = z.record(z.string(), z.unknown());
 
+export const quoteValidationErrorResponseSchema = z.object({
+  message: z.string().min(1),
+  errors: z.record(z.string(), z.array(z.string().min(1)))
+});
+
 export const riskBandSchema = z.enum(["STANDARD", "ELEVATED", "HIGH_RISK"]);
 
 export const appliedFactorSchema = z.object({
@@ -54,6 +59,7 @@ export const quoteResponseSchema = z.object({
 });
 
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>;
+export type QuoteValidationErrorResponse = z.infer<typeof quoteValidationErrorResponseSchema>;
 export type UIInput = z.infer<typeof uiInputSchema>;
 export type UIInputsResponse = z.infer<typeof uiInputsResponseSchema>;
 export type RiskBand = z.infer<typeof riskBandSchema>;

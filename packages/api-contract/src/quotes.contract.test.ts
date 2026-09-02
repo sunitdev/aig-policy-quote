@@ -1,7 +1,12 @@
 import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
 
-import { quoteRequestSchema, quoteResponseSchema, uiInputsResponseSchema } from "./quotes.contract";
+import {
+  quoteRequestSchema,
+  quoteResponseSchema,
+  quoteValidationErrorResponseSchema,
+  uiInputsResponseSchema
+} from "./quotes.contract";
 
 describe("quotes contract", () => {
   describe("uiInputsResponseSchema", () => {
@@ -81,6 +86,26 @@ describe("quotes contract", () => {
       expect(() => quoteRequestSchema.parse(null)).toThrow(ZodError);
       expect(() => quoteRequestSchema.parse("invalid")).toThrow(ZodError);
       expect(() => quoteRequestSchema.parse([])).toThrow(ZodError);
+    });
+  });
+
+  describe("quoteValidationErrorResponseSchema", () => {
+    it("accepts field-level quote validation errors", () => {
+      expect(
+        quoteValidationErrorResponseSchema.parse({
+          message: "Quote request contains validation errors.",
+          errors: {
+            age: ["Age is required."],
+            propertyType: ["Property Type must be one of: House, Flat."]
+          }
+        })
+      ).toEqual({
+        message: "Quote request contains validation errors.",
+        errors: {
+          age: ["Age is required."],
+          propertyType: ["Property Type must be one of: House, Flat."]
+        }
+      });
     });
   });
 

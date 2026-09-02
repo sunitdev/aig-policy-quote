@@ -4,6 +4,7 @@ export {
   coverageDetailsSchema,
   quoteRequestSchema,
   quoteResponseSchema,
+  quoteValidationErrorResponseSchema,
   riskBandSchema,
   uiInputSchema,
   uiInputsResponseSchema,
@@ -11,6 +12,7 @@ export {
   type CoverageDetails,
   type QuoteRequest,
   type QuoteResponse,
+  type QuoteValidationErrorResponse,
   type RiskBand,
   type UIInput,
   type UIInputsResponse

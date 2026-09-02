@@ -1225,3 +1225,77 @@ Dont assume anything ask me question if needed.
 - Asked to keep Lambda handlers working while adding the Docker/Fargate-style Fastify runtime.
 - Asked to replace Node ESM `.js` source import suffixes with a bundled Fastify server runtime approach.
 - Asked to add a `dev-fastify` Makefile command similar to `dev-serverless` but using the Fastify backend API.
+
+## Session: Backend Quote Validation
+
+- Started: 2026-09-02 01:56:35 +0100
+- Agent: codex
+- Session ID: `unknown`
+
+### Initial Prompt
+
+**Prompted at:** 2026-09-02 01:56:35 +0100
+
+```text
+Add backend validation layer for `POST /policy/quote`.
+
+
+
+Behaviour:
+
+- Frontend validation already exists; add an extra validation layer in the backend API.
+- Validate the request body against `uiInputs` from `kb/risk-kb.json` before quote calculation.
+- Do not hardcode policy quote field names.
+- For each `uiInputs` field:
+  - required fields must be present and non-empty
+  - `text` values must be strings
+  - `number` values must be numbers and respect `min` / `max`
+  - `select` values must be one of the configured options
+- Return `400` with field-level validation errors.
+- Keep existing quote calculation unchanged for valid requests.
+
+Context:
+
+- [backend.md](docs/backend.md)
+- [kb.md](docs/kb.md)
+
+
+
+Verification:
+
+- Add unit tests for missing required fields, wrong types, min/max failures, invalid select option, and valid quote requests.
+- Make sure frontend can display backend validation errors if returned.
+- Run Jest tests, typecheck, lint, and build.
+
+Dont assume anything ask me question if needed.
+```
+
+### Summary of change
+
+- Added a KB-driven backend validation layer for `POST /policy/quote` that validates request bodies against active `uiInputs` before quote calculation.
+- Added a shared quote validation error contract with field-level errors and endpoint tests for required fields, wrong types, min/max failures, invalid select options, optional empty values, unknown extra fields, and valid quote calculation.
+- Updated Lambda and Fastify quote route tests to use valid required-field payloads under the stricter backend contract.
+- Updated the Angular quote page to map backend validation errors onto generated form controls while preserving generic API failure handling.
+- Removed the frontend runtime import of the shared Zod validation schema so Angular/Vite dev serving does not need to resolve `zod` from the frontend bundle.
+- Added `turbo` as a root dev dependency so the existing workspace `typecheck`, `lint`, and `build` scripts can run.
+
+### What Changed
+
+- `AGENT_LOG.md`
+- `apps/backend/src/endpoints/create-quote.endpoint.test.ts`
+- `apps/backend/src/endpoints/create-quote.endpoint.ts`
+- `apps/backend/src/endpoints/quote-request-validation.ts`
+- `apps/backend/src/lambda/create-quote.test.ts`
+- `apps/backend/src/server/routes.test.ts`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.test.ts`
+- `apps/frontend/src/features/policy-quote/policy-quote.page.ts`
+- `package.json`
+- `packages/api-contract/src/index.ts`
+- `packages/api-contract/src/quotes.contract.test.ts`
+- `packages/api-contract/src/quotes.contract.ts`
+- `pnpm-lock.yaml`
+
+### What Changes were suggest by the user
+
+- Asked to implement the approved Backend Validation for `POST /policy/quote` plan.
+- Reported a Vite import-analysis error resolving `zod` from the frontend dev bundle and asked to not import zod at runtime.
